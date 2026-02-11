@@ -9,7 +9,7 @@
     },
     {
       "type": "bitmap",
-      "file": "font/gamemodes/subtiers/diamond_survival.png",
+      "file": "font/gamemodes/subtiers/diamond_vanilla.png",
       "height": 12,
       "ascent": 12,
       "chars": ["\uF001"]

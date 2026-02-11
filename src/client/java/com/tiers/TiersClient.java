@@ -352,11 +352,11 @@ public class TiersClient implements ClientModInitializer {
     }
 
     public static void changeIcons(Icons.Type iconType, boolean reload) {
-        Icons.identifierMCTiers = Identifier.of("minecraft", "gamemodes/" + iconType.name().toLowerCase());
-        Icons.identifierPvPTiers = Identifier.of("minecraft", "gamemodes/" + iconType.name().toLowerCase());
-        Icons.identifierMCTiersTags = Identifier.of("minecraft", "gamemodes/" + iconType.name().toLowerCase() + "-tags");
-        Icons.identifierPvPTiersTags = Identifier.of("minecraft", "gamemodes/" + iconType.name().toLowerCase() + "-tags");
-        ColorLoader.identifier = Identifier.of("minecraft", "colors/" + iconType.name().toLowerCase() + ".json");
+        Icons.identifierMCTiers = Identifier.of("minecraft", "gamemodes/" + iconType.name().toLowerCase(Locale.ROOT));
+        Icons.identifierPvPTiers = Identifier.of("minecraft", "gamemodes/" + iconType.name().toLowerCase(Locale.ROOT));
+        Icons.identifierMCTiersTags = Identifier.of("minecraft", "gamemodes/" + iconType.name().toLowerCase(Locale.ROOT) + "-tags");
+        Icons.identifierPvPTiersTags = Identifier.of("minecraft", "gamemodes/" + iconType.name().toLowerCase(Locale.ROOT) + "-tags");
+        ColorLoader.identifier = Identifier.of("minecraft", "colors/" + iconType.name().toLowerCase(Locale.ROOT) + ".json");
 
         if (reload)
             MinecraftClient.getInstance().reloadResources();

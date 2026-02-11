@@ -18,7 +18,7 @@ public class ConfigManager {
     private static Config config;
     private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("Tiers.json");
     private static String version;
-    private static boolean toastShown;
+    private static boolean upgradeAdjustmentDone;
     private static int launchTickCounter;
 
     static {
@@ -89,11 +89,9 @@ public class ConfigManager {
         if (Arrays.stream(Mode.values()).toList().contains(config.activeSubtiersMode) && config.activeSubtiersMode.toString().contains("SUBTIERS"))
             TiersClient.activeSubtiersMode = config.activeSubtiersMode;
 
-        if (!version.equals(config.version)) {
-            // Code below is reserved to the current version (not every version upgrade changes config values)
-
+        if (config.version == null) {
             ClientTickEvents.END_CLIENT_TICK.register(minecraftClient -> {
-                if (toastShown)
+                if (upgradeAdjustmentDone)
                     return;
 
                 if (minecraftClient.currentScreen instanceof TitleScreen) {
@@ -109,8 +107,7 @@ public class ConfigManager {
                         TiersClient.toggleAutoKitDetect = false;
 
                         saveConfig();
-
-                        toastShown = true;
+                        upgradeAdjustmentDone = true;
                     }
                 }
             });

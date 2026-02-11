@@ -21,7 +21,7 @@ public class SubtiersProfile extends SuperProfile {
 
     private void addGamemodes() {
         gameModes.add(new GameMode(Mode.SUBTIERS_MINECART, "minecart"));
-        gameModes.add(new GameMode(Mode.SUBTIERS_DIAMOND_SURVIVAL, "dia_crystal"));
+        gameModes.add(new GameMode(Mode.SUBTIERS_DIAMOND_VANILLA, "dia_crystal"));
         gameModes.add(new GameMode(Mode.SUBTIERS_DEBUFF, "debuff"));
         gameModes.add(new GameMode(Mode.SUBTIERS_ELYTRA, "elytra"));
         gameModes.add(new GameMode(Mode.SUBTIERS_SPEED, "speed"));

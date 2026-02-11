@@ -5,6 +5,7 @@ plugins {
 }
 
 minecraft_version = project.minecraft_version
+simple_version = project.simple_version
 version = project.mod_version
 group = project.maven_group
 
@@ -59,7 +60,7 @@ modrinth {
     projectId = "bubOj4AD"
     versionNumber = "${project.version}"
     versionName = "Tiers ${project.version}"
-    changelog = "[Version ${project.version}](https://github.com/Flavio6561/Tiers/wiki/Version-changelogs)"
+    changelog = "[Version ${project.simple_version}](https://github.com/Flavio6561/Tiers/wiki/Version-changelogs)"
     uploadFile = remapJar
     versionType = "beta"
     gameVersions = [project.minecraft_version]

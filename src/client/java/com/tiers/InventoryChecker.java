@@ -77,9 +77,9 @@ public class InventoryChecker {
             detected = Mode.SUBTIERS_MINECART;
         }
 
-        if (checkDiamondSurvival(playerInventory)) {
-            TiersClient.activeSubtiersMode = Mode.SUBTIERS_DIAMOND_SURVIVAL;
-            detected = Mode.SUBTIERS_DIAMOND_SURVIVAL;
+        if (checkDiamondVanilla(playerInventory)) {
+            TiersClient.activeSubtiersMode = Mode.SUBTIERS_DIAMOND_VANILLA;
+            detected = Mode.SUBTIERS_DIAMOND_VANILLA;
         }
 
         if (checkDeBuff(playerInventory)) {
@@ -431,7 +431,7 @@ public class InventoryChecker {
                 hasEnchantedChestplate && hasEnchantedLeggings && hasEnchantedBoots;
     }
 
-    private static boolean checkDiamondSurvival(PlayerInventory playerInventory) {
+    private static boolean checkDiamondVanilla(PlayerInventory playerInventory) {
         boolean hasObsidian = false;
         boolean hasCrystal = false;
         boolean hasAnchor = false;
@@ -455,7 +455,7 @@ public class InventoryChecker {
             hasLeggings |= hasItem(stack, Items.DIAMOND_LEGGINGS, true);
             hasBoots |= hasItem(stack, Items.DIAMOND_BOOTS, true);
 
-            if (DIAMOND_SURVIVAL_NON_ALLOWED.contains(stack.getItem())) return false;
+            if (DIAMOND_VANILLA_NON_ALLOWED.contains(stack.getItem())) return false;
         }
 
         return hasObsidian && hasCrystal && hasAnchor && hasGlowstone && hasSword && hasHelmet && hasChestplate && hasLeggings && hasBoots;
@@ -971,7 +971,7 @@ public class InventoryChecker {
             Items.GLOWSTONE
     );
 
-    private static final Set<Item> DIAMOND_SURVIVAL_NON_ALLOWED = Set.of(
+    private static final Set<Item> DIAMOND_VANILLA_NON_ALLOWED = Set.of(
             Items.NETHERITE_SWORD,
             Items.NETHERITE_PICKAXE,
             Items.NETHERITE_HELMET,

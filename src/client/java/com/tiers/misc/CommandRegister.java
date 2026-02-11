@@ -12,6 +12,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.command.CommandSource;
 
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 
 public class CommandRegister {
@@ -23,12 +24,12 @@ public class CommandRegister {
             return suggestionsBuilder.buildFuture();
 
         for (PlayerListEntry playerListEntry : minecraftClient.getNetworkHandler().getPlayerList())
-            if (CommandSource.shouldSuggest(suggestionsBuilder.getRemaining().toLowerCase(), playerListEntry.getProfile().name().toLowerCase()) && playerListEntry.getProfile().name().length() > 2)
+            if (CommandSource.shouldSuggest(suggestionsBuilder.getRemaining().toLowerCase(Locale.ROOT), playerListEntry.getProfile().name().toLowerCase(Locale.ROOT)) && playerListEntry.getProfile().name().length() > 2)
                 suggestionsBuilder.suggest(playerListEntry.getProfile().name(), () -> "Search tiers for " + playerListEntry.getProfile().name());
 
-        if (CommandSource.shouldSuggest(suggestionsBuilder.getRemaining().toLowerCase(), "-config"))
+        if (CommandSource.shouldSuggest(suggestionsBuilder.getRemaining().toLowerCase(Locale.ROOT), "-config"))
             suggestionsBuilder.suggest("-config", () -> "Open Tiers config screen");
-        if (CommandSource.shouldSuggest(suggestionsBuilder.getRemaining().toLowerCase(), "-toggle"))
+        if (CommandSource.shouldSuggest(suggestionsBuilder.getRemaining().toLowerCase(Locale.ROOT), "-toggle"))
             suggestionsBuilder.suggest("-toggle", () -> "Toggle " + (TiersClient.toggleMod ? "off" : "on") + " Tiers");
 
         return suggestionsBuilder.buildFuture();

@@ -9,6 +9,7 @@ import net.minecraft.text.Text;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Locale;
 
 public class GameMode {
     public Status status = Status.SEARCHING;
@@ -146,6 +147,6 @@ public class GameMode {
     private int getTierColor(String tier) {
         if (tier.contains("R"))
             return ColorControl.getColor("retired");
-        return ColorControl.getColor(tier.toLowerCase());
+        return ColorControl.getColor(tier.toLowerCase(Locale.ROOT));
     }
 }

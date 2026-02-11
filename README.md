@@ -25,11 +25,13 @@ Official Display mod for [PvPTiers](https://pvptiers.com). Also Supports other T
 
 ### Screen config (ModMenu or /tiers config):
 
-- **`Toggle Tiers`** toggles the mod on or off
-- **`Toggle Icons`** toggles the nametag icons on or off
+- **`Toggle Tiers`** toggles Tiers
+- **`Toggle Icons`** toggles the icons next to the tiers
+- **`Toggle Tab`** toggles Tiers on the tablist
+- **`Toggle Chat`** toggles Tiers in chat
 - **`Toggle Dynamic Separator`** decides if the separator | is the same color as the tier or gray
 - **`Displayed Tier`** decides whether to display selected mode, adaptive highest or absolute highest
-- **`Preview Switcher`** decides whether to preview the default profile (TheRandomizer) or your character
+- **`Preview Switcher`** decides whether to preview the default profile (ItzRealMe) or your character
 - **`Left and Right gamemode switcher`** switches between gamemodes of the selected provider
 - **`Position Settings`** decides if the specific provider gamemodes are displayer on the right, left or neither
 - **`Icon and color presets:`** you can switch between classic, PvPTiers and MCTiers styled icons
@@ -43,7 +45,7 @@ Official Display mod for [PvPTiers](https://pvptiers.com). Also Supports other T
 > Tiers is able to track and display all rankings from the official tierlist [PvPTiers](https://pvptiers.com) and variant lists [MCTiers](https://mctiers.com), [Subtiers](https://subtiers.net)
 
 **Customizable icons:**
-> With Tiers you can customize gamemodes icons and text colors, as well as choosing where and what gamemode to display; want to manually modify the icons or tiers colors? Edit and add in your pack folder the [default texture pack](https://github.com/Flavio6561/Tiers/tree/master/src/main/resources/resourcepacks)
+> With Tiers, you can customize gamemodes icons and text colors, as well as choosing where and what gamemode to display; want to manually modify the icons or tiers colors? Edit and add in your pack folder the [default texture pack](https://github.com/Flavio6561/Tiers/tree/master/src/main/resources/resourcepacks)
 
 ### Other:
 
