@@ -2,15 +2,15 @@ package com.tiers.profile.types;
 
 import com.tiers.misc.Mode;
 import com.tiers.profile.GameMode;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 public class MCTiersProfile extends SuperProfile {
-    public static final Identifier MCTIERS_IMAGE = Identifier.of("minecraft", "textures/mctiers_logo.png");
+    public static final Identifier MCTIERS_IMAGE = Identifier.fromNamespaceAndPath("minecraft", "textures/mctiers_logo.png");
 
-    public MCTiersProfile(String uuid, String apiUrl) {
+    public MCTiersProfile(String apiUrl, String uuid, String extra) {
         super();
         addGamemodes();
-        buildRequest(uuid, apiUrl);
+        buildRequest(apiUrl, uuid, extra);
     }
 
     public MCTiersProfile(String json) {

@@ -2,15 +2,16 @@ package com.tiers.profile.types;
 
 import com.tiers.misc.Mode;
 import com.tiers.profile.GameMode;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
+
 
 public class PvPTiersProfile extends SuperProfile {
-    public static final Identifier PVPTIERS_IMAGE = Identifier.of("minecraft", "textures/pvptiers_logo.png");
+    public static final Identifier PVPTIERS_IMAGE = Identifier.fromNamespaceAndPath("minecraft", "textures/pvptiers_logo.png");
 
-    public PvPTiersProfile(String uuid, String apiUrl) {
+    public PvPTiersProfile(String apiUrl, String uuid, String extra) {
         super();
         addGamemodes();
-        buildRequest(uuid, apiUrl);
+        buildRequest(apiUrl, uuid, extra);
     }
 
     public PvPTiersProfile(String json) {

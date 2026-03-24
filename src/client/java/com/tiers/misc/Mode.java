@@ -1,11 +1,13 @@
 package com.tiers.misc;
 
 import com.tiers.textures.Icons;
-import net.minecraft.text.Style;
-import net.minecraft.text.StyleSpriteSource;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.*;
+import net.minecraft.util.CommonColors;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -57,25 +59,25 @@ public enum Mode {
         SUBTIERS
     }
 
-    public Text getIcon() {
+    public Component getIcon() {
         Identifier identifier = switch (category) {
             case MCTIERS -> Icons.identifierMCTiers;
             case PVPTIERS -> Icons.identifierPvPTiers;
             case SUBTIERS -> Icons.identifierSubtiers;
         };
-        return Text.literal(unicode).setStyle(Style.EMPTY.withFont(new StyleSpriteSource.Font(identifier)));
+        return Component.literal(unicode).setStyle(Style.EMPTY.withFont(new FontDescription.Resource(identifier)).withColor(CommonColors.WHITE));
     }
 
-    public Text getIconTag() {
+    public Component getIconTag() {
         Identifier identifier = switch (category) {
             case MCTIERS -> Icons.identifierMCTiersTags;
             case PVPTIERS -> Icons.identifierPvPTiersTags;
             case SUBTIERS -> Icons.identifierSubtiersTags;
         };
-        return Text.literal(unicode).setStyle(Style.EMPTY.withFont(new StyleSpriteSource.Font(identifier)));
+        return Component.literal(unicode).setStyle(Style.EMPTY.withFont(new FontDescription.Resource(identifier)).withColor(CommonColors.WHITE));
     }
 
-    public Text getTextLabel() {
+    public Component getTextLabel() {
         return Icons.colorText(label, name().toLowerCase(Locale.ROOT));
     }
 

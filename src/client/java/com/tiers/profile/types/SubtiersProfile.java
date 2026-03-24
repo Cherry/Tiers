@@ -2,15 +2,16 @@ package com.tiers.profile.types;
 
 import com.tiers.misc.Mode;
 import com.tiers.profile.GameMode;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
+
 
 public class SubtiersProfile extends SuperProfile {
-    public static final Identifier SUBTIERS_IMAGE = Identifier.of("minecraft", "textures/subtiers_logo.png");
+    public static final Identifier SUBTIERS_IMAGE = Identifier.fromNamespaceAndPath("minecraft", "textures/subtiers_logo.png");
 
-    public SubtiersProfile(String uuid, String apiUrl) {
+    public SubtiersProfile(String apiUrl, String uuid, String extra) {
         super();
         addGamemodes();
-        buildRequest(uuid, apiUrl);
+        buildRequest(apiUrl, uuid, extra);
     }
 
     public SubtiersProfile(String json) {

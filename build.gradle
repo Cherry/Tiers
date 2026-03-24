@@ -1,6 +1,6 @@
 plugins {
-	id 'fabric-loom' version "${loom_version}"
-	id 'maven-publish'
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
+    id 'maven-publish'
     id "com.modrinth.minotaur" version "2.8.10"
 }
 
@@ -14,8 +14,8 @@ base {
 }
 
 repositories {
-	maven { url "https://maven.shedaniel.me/" }
-	maven { url "https://maven.terraformersmc.com/releases/" }
+    maven {url = "https://maven.shedaniel.me/"}
+    maven {url = "https://maven.terraformersmc.com/releases/"}
 }
 
 loom {
@@ -30,11 +30,11 @@ loom {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modApi "com.terraformersmc:modmenu:${modmenu_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    api "com.terraformersmc:modmenu:${modmenu_version}"
 }
 
 processResources {
@@ -46,13 +46,13 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
+	it.options.release = 25
 }
 
 java {
 	withSourcesJar()
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 modrinth {
@@ -61,8 +61,8 @@ modrinth {
     versionNumber = "${project.version}"
     versionName = "Tiers ${project.version}"
     changelog = "[Version ${project.simple_version}](https://github.com/Flavio6561/Tiers/wiki/Version-changelogs)"
-    uploadFile = remapJar
-    versionType = "beta"
+    uploadFile = jar
+    versionType = "alpha"
     gameVersions = [project.minecraft_version]
     loaders = ["fabric", "quilt"]
 
@@ -72,4 +72,4 @@ modrinth {
     }
 }
 
-tasks.modrinth.dependsOn(tasks.remapJar)
+tasks.modrinth.dependsOn(tasks.jar)

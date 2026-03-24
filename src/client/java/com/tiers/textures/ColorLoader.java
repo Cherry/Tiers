@@ -6,10 +6,11 @@ import com.tiers.PlayerProfileQueue;
 import com.tiers.TiersClient;
 import com.tiers.profile.PlayerProfile;
 import com.tiers.screens.ConfigScreen;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.ResourceReloader;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import org.jspecify.annotations.NonNull;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -19,14 +20,14 @@ import java.util.concurrent.Executor;
 
 import static com.tiers.TiersClient.LOGGER;
 
-public class ColorLoader implements ResourceReloader {
-    public static Identifier identifier = Identifier.of("minecraft", "colors/pvptiers.json");
+public class ColorLoader implements PreparableReloadListener {
+    public static Identifier identifier = Identifier.fromNamespaceAndPath("minecraft", "colors/pvptiers.json");
 
     @Override
-    public CompletableFuture<Void> reload(Store store, Executor prepareExecutor, Synchronizer reloadSynchronizer, Executor applyExecutor) {
-        if (store.getResourceManager().getResource(identifier).isPresent()) {
+    public @NonNull CompletableFuture<Void> reload(SharedState currentReload, @NonNull Executor taskExecutor, @NonNull PreparationBarrier preparationBarrier, @NonNull Executor reloadExecutor) {
+        if (currentReload.resourceManager().getResource(identifier).isPresent()) {
             try {
-                ColorControl.updateColors(JsonHelper.deserialize(new Gson(), new InputStreamReader(store.getResourceManager().getResource(identifier).get().getInputStream(), StandardCharsets.UTF_8), JsonObject.class));
+                ColorControl.updateColors(GsonHelper.fromJson(new Gson(), new InputStreamReader(currentReload.resourceManager().getResource(identifier).get().open(), StandardCharsets.UTF_8), JsonObject.class));
                 TiersClient.restyleAllTexts(TiersClient.playerProfiles);
                 TiersClient.updateAllTags();
             } catch (IOException ignored) {
@@ -35,7 +36,7 @@ public class ColorLoader implements ResourceReloader {
         }
 
         if (ConfigScreen.ownProfile == null) {
-            ConfigScreen.ownProfile = new PlayerProfile(MinecraftClient.getInstance().getGameProfile().name(), false);
+            ConfigScreen.ownProfile = new PlayerProfile(Minecraft.getInstance().getGameProfile().name(), false);
             PlayerProfileQueue.putFirstInQueue(ConfigScreen.ownProfile);
 
             String defaultProfileMojang = loadStringFromResources("json/defaultProfileMojang.json");
@@ -55,7 +56,7 @@ public class ColorLoader implements ResourceReloader {
             TiersClient.restyleAllTexts(configProfiles);
         }
 
-        return CompletableFuture.runAsync(() -> {}, prepareExecutor).thenCompose(reloadSynchronizer::whenPrepared).thenRunAsync(() -> {}, applyExecutor);
+        return CompletableFuture.runAsync(() -> {}, taskExecutor).thenCompose(preparationBarrier::wait).thenRunAsync(() -> {}, reloadExecutor);
     }
 
     private static String loadStringFromResources(String path) {

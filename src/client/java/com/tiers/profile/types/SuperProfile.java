@@ -6,7 +6,7 @@ import com.tiers.misc.Mode;
 import com.tiers.profile.GameMode;
 import com.tiers.profile.Status;
 import com.tiers.textures.Icons;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -28,10 +28,10 @@ public class SuperProfile {
     private int points;
     private int overallPosition;
 
-    public Text displayedRegion;
-    public Text displayedOverall;
-    public Text overallTooltip;
-    public Text regionTooltip;
+    public Component displayedRegion;
+    public Component displayedOverall;
+    public Component overallTooltip;
+    public Component regionTooltip;
 
     public final ArrayList<GameMode> gameModes = new ArrayList<>();
     public GameMode highest;
@@ -42,7 +42,7 @@ public class SuperProfile {
     protected SuperProfile() {
     }
 
-    protected void buildRequest(String uuid, String apiUrl) {
+    protected void buildRequest(String apiUrl, String uuid, String extra) {
         if (numberOfRequests == 5 || status != Status.SEARCHING) {
             status = Status.TIMEOUTED;
             return;
@@ -51,7 +51,7 @@ public class SuperProfile {
         numberOfRequests++;
 
         HttpRequest httpRequest = HttpRequest.newBuilder()
-                .uri(URI.create(apiUrl + uuid))
+                .uri(URI.create(apiUrl + uuid + extra))
                 .header("User-Agent", userAgent)
                 .timeout(Duration.ofSeconds(4))
                 .GET()
@@ -69,7 +69,7 @@ public class SuperProfile {
 
                 parseJson(response.body());
             }).exceptionally(ignored -> {
-                CompletableFuture.delayedExecutor(100, TimeUnit.MILLISECONDS).execute(() -> buildRequest(uuid, apiUrl));
+                CompletableFuture.delayedExecutor(100, TimeUnit.MILLISECONDS).execute(() -> buildRequest(uuid, apiUrl, extra));
                 return null;
             });
         }
@@ -139,7 +139,7 @@ public class SuperProfile {
         return highest;
     }
 
-    private Text getRegionText() {
+    private Component getRegionText() {
         if (region.equalsIgnoreCase("EU"))
             return Icons.colorText(region, "eu");
         else if (region.equalsIgnoreCase("NA"))
@@ -159,7 +159,7 @@ public class SuperProfile {
         return Icons.colorText("Unknown", "unknown");
     }
 
-    private Text getRegionTooltip() {
+    private Component getRegionTooltip() {
         if (region.equalsIgnoreCase("EU"))
             return Icons.colorText("Europe", "eu");
         else if (region.equalsIgnoreCase("NA"))
@@ -179,7 +179,7 @@ public class SuperProfile {
         return Icons.colorText("Unknown", "unknown");
     }
 
-    private Text getOverallText() {
+    private Component getOverallText() {
         String positionString = "#" + overallPosition;
         if (!(this instanceof PvPTiersProfile) && points >= 250) return Icons.colorText(positionString, "master");
         else if (this instanceof PvPTiersProfile && points >= 200) return Icons.colorText(positionString, "master");
@@ -191,7 +191,7 @@ public class SuperProfile {
         return Icons.colorText(positionString, "rookie");
     }
 
-    private Text getOverallTooltip() {
+    private Component getOverallTooltip() {
         String overallTooltip = "Combat ";
 
         if (this instanceof SubtiersProfile)
@@ -206,6 +206,29 @@ public class SuperProfile {
         else overallTooltip = "Rookie";
         overallTooltip += "\n\nPoints: " + points;
 
-        return Text.literal(overallTooltip).setStyle(displayedOverall.getStyle());
+        return Component.literal(overallTooltip).setStyle(displayedOverall.getStyle());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder gameModesDetails = new StringBuilder();
+        for (GameMode gameMode : gameModes)
+            gameModesDetails.append(gameMode);
+
+        return "\nSuperProfile{" +
+                "\nstatus=" + status +
+                "\nnumberOfRequests=" + numberOfRequests +
+                "\nregion=" + (region != null ? region : "null") +
+                "\npoints=" + points +
+                "\noverallPosition=" + overallPosition +
+                "\ndisplayedRegion=" + (displayedRegion != null ? displayedRegion.getString() : "null") +
+                "\ndisplayedOverall=" + (displayedOverall != null ? displayedOverall.getString() : "null") +
+                "\noverallTooltip=" + (overallTooltip != null ? overallTooltip.getString() : "null") +
+                "\nregionTooltip=" + (regionTooltip != null ? regionTooltip.getString() : "null") +
+                "\ndrawn=" + drawn +
+                "\n\ngameModes=" + gameModesDetails +
+                "\n\nhighest=" + (highest != null ? highest : "null") +
+                "\n\noriginalJson=" + (originalJson != null ? originalJson : "null") +
+                "\n\n}";
     }
 }

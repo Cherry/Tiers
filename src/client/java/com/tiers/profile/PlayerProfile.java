@@ -2,6 +2,7 @@ package com.tiers.profile;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.tiers.TiersClient;
 import com.tiers.misc.Mode;
 import com.tiers.profile.types.MCTiersProfile;
 import com.tiers.profile.types.PvPTiersProfile;
@@ -10,13 +11,17 @@ import com.tiers.profile.types.SuperProfile;
 import com.tiers.textures.ColorControl;
 import com.tiers.textures.Icons;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.contents.PlainTextContents;
+import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.resources.Identifier;
+import net.minecraft.network.chat.Component;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,8 +56,10 @@ public class PlayerProfile {
     public PvPTiersProfile profilePvPTiers;
     public SubtiersProfile profileSubtiers;
 
-    public Text toAppendLeft;
-    public Text toAppendRight;
+    public Component toAppendLeft;
+    public Component toAppendRight;
+    private Component fullName;
+    private Component deepReplaceName;
 
     private int numberOfRequests;
     private final boolean regular;
@@ -60,13 +67,22 @@ public class PlayerProfile {
     private static final String UUID_API_1 = "https://playerdb.co/api/player/minecraft/";
     private static final String UUID_API_2 = "https://api.mojang.com/users/profiles/minecraft/";
     private static final String UUID_API_3 = "https://api.minecraftservices.com/minecraft/profile/lookup/name/";
+    private static boolean forceNewRequest;
 
     public PlayerProfile(String name, boolean regular) {
+        if (name.contains("-force")) {
+            String[] content = name.split("-");
+            if (content.length == 2) {
+                name = content[0];
+                forceNewRequest = true;
+            }
+        }
+
         this.regular = regular;
         this.name = name;
         inGameName = name;
 
-        status = !name.matches("^[a-zA-Z0-9_]{3,16}$") || name.contains(".") || name.length() < 3 || name.length() > 16 ? Status.NOT_PLAYER : Status.SEARCHING;
+        status = !name.matches("^[a-zA-Z0-9_]{3,16}$") ? Status.NOT_PLAYER : Status.SEARCHING;
     }
 
     public PlayerProfile(String mojangJson, String jsonMCTiers, String jsonPvPTiers, String jsonSubtiers) {
@@ -89,10 +105,7 @@ public class PlayerProfile {
 
         Path path = FabricLoader.getInstance().getGameDir().resolve("cache/tiers/06ec3577329945fabbdf613b1f86c8ab.png");
 
-        try (InputStream inputStream = MinecraftClient.getInstance().getResourceManager().getResource(Identifier.of("minecraft", "textures/default.png")).orElseThrow().getInputStream()) {
-            if (inputStream == null)
-                throw new IOException();
-
+        try (InputStream inputStream = Minecraft.getInstance().getResourceManager().getResource(Identifier.fromNamespaceAndPath("minecraft", "textures/default.png")).orElseThrow().open()) {
             Files.createDirectories(path.getParent());
             Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ignored) {
@@ -263,9 +276,7 @@ public class PlayerProfile {
         if (!regular)
             savePlayerImage();
 
-        profileMCTiers = new MCTiersProfile(uuid, "https://mctiers.com/api/v2/profile/");
-        profilePvPTiers = new PvPTiersProfile(uuid, "https://pvptiers.com/api/profile/");
-        profileSubtiers = new SubtiersProfile(uuid, "https://subtiers.net/api/profile/");
+        updateTierlistProfiles(0);
 
         updateAppendingText();
 
@@ -275,9 +286,41 @@ public class PlayerProfile {
         status = Status.READY;
     }
 
+    public void updateTierlistProfiles(int mode) {
+        new Thread(() -> {
+            String extra = "";
+            if (forceNewRequest || mode != 0)
+                extra = "?" + System.currentTimeMillis();
+
+            forceNewRequest = false;
+
+            switch (mode) {
+                case 0:
+                    profileMCTiers = new MCTiersProfile("https://mctiers.com/api/v2/profile/", uuid, extra);
+                    profilePvPTiers = new PvPTiersProfile("https://pvptiers.com/api/profile/", uuid, extra);
+                    profileSubtiers = new SubtiersProfile("https://subtiers.net/api/profile/", uuid, extra);
+                    break;
+                case 1:
+                    profileMCTiers = new MCTiersProfile("https://mctiers.com/api/v2/profile/", uuid, extra);
+                    break;
+                case 2:
+                    profilePvPTiers = new PvPTiersProfile("https://pvptiers.com/api/profile/", uuid, extra);
+                    break;
+                case 3:
+                    profileSubtiers = new SubtiersProfile("https://subtiers.net/api/profile/", uuid, extra);
+                    break;
+            }
+
+            updateAppendingText();
+
+            if (mode != 0)
+                TiersClient.showUpdatedPlayerProfile(this, false);
+        }).start();
+    }
+
     public void updateAppendingText() {
-        toAppendRight = Text.empty();
-        toAppendLeft = Text.empty();
+        toAppendRight = Component.empty();
+        toAppendLeft = Component.empty();
 
         if (positionMCTiers == DisplayStatus.RIGHT)
             toAppendRight = updateProfileNameRight(profileMCTiers, activeMCTiersMode);
@@ -297,31 +340,33 @@ public class PlayerProfile {
         updateTextDisplayEntities();
     }
 
-    public Text getFullName() {
-        Text playerText = nameChanged ? Text.of(inGameName + " (AKA " + name + ")") : Text.of(name);
+    public Component getFullName() {
+        Component playerText = nameChanged ? Component.literal(inGameName + " (AKA " + name + ")") : Component.literal(name);
 
         if (!toggleMod)
             return playerText;
 
         updateAppendingText();
-        return Text.empty()
-                .append(toAppendLeft)
+        return Component.empty()
+                .append(toAppendLeft.copy())
                 .append(playerText)
-                .append(toAppendRight);
+                .append(toAppendRight.copy());
     }
 
-    public Text getFullName(Text original) {
+    public Component getFullName(Component original) {
+        original = original.copy();
+
         if (status != Status.READY)
             return original;
 
-        return Text.empty()
-                .append(toAppendLeft)
+        return fullName = Component.empty()
+                .append(toAppendLeft.copy())
                 .append(original)
-                .append(toAppendRight);
+                .append(toAppendRight.copy());
     }
 
-    private Text updateProfileNameRight(SuperProfile superProfile, Mode activeMode) {
-        MutableText returnValue = Text.empty();
+    private Component updateProfileNameRight(SuperProfile superProfile, Mode activeMode) {
+        MutableComponent returnValue = Component.empty();
 
         if (superProfile != null && superProfile.status == Status.READY) {
             GameMode shown = superProfile.getGameMode(activeMode);
@@ -338,17 +383,17 @@ public class PlayerProfile {
             if (shown == null || shown.status != Status.READY)
                 return returnValue;
 
-            MutableText separator = Text.literal(" | ").setStyle(toggleAdaptiveSeparator ? shown.displayedTier.getStyle() : Style.EMPTY.withColor(ColorControl.getColor("static_separator")));
-            returnValue.append(Text.empty().append(separator).append(shown.displayedTier));
+            MutableComponent separator = Component.literal(" | ").setStyle(toggleAdaptiveSeparator ? shown.displayedTier.getStyle() : Style.EMPTY.withColor(ColorControl.getColor("static_separator")));
+            returnValue.append(Component.empty().append(separator).append(shown.displayedTier));
 
             if (toggleIcons)
-                returnValue.append(Text.literal(" ").append(shown.gamemode.getIconTag()));
+                returnValue.append(Component.literal(" ").append(shown.gamemode.getIconTag()));
         }
         return returnValue;
     }
 
-    private Text updateProfileNameLeft(SuperProfile superProfile, Mode activeMode) {
-        MutableText returnValue = Text.empty();
+    private Component updateProfileNameLeft(SuperProfile superProfile, Mode activeMode) {
+        MutableComponent returnValue = Component.empty();
 
         if (superProfile != null && superProfile.status == Status.READY) {
             GameMode shown = superProfile.getGameMode(activeMode);
@@ -365,11 +410,11 @@ public class PlayerProfile {
             if (shown == null || shown.status != Status.READY)
                 return returnValue;
 
-            MutableText separator = Text.literal(" | ").setStyle(toggleAdaptiveSeparator ? shown.displayedTier.getStyle() : Style.EMPTY.withColor(ColorControl.getColor("static_separator")));
+            MutableComponent separator = Component.literal(" | ").setStyle(toggleAdaptiveSeparator ? shown.displayedTier.getStyle() : Style.EMPTY.withColor(ColorControl.getColor("static_separator")));
 
             if (toggleIcons)
-                returnValue = Text.empty().append(shown.gamemode.getIconTag()).append(" ");
-            returnValue.append(Text.empty().append(shown.displayedTier).append(separator));
+                returnValue = Component.empty().append(shown.gamemode.getIconTag()).append(" ");
+            returnValue.append(Component.empty().append(shown.displayedTier).append(separator));
         }
         return returnValue;
     }
@@ -403,5 +448,79 @@ public class PlayerProfile {
             return false;
         }
         return true;
+    }
+
+    public Component deepReplace(Component original) {
+        String targetName = nameChanged ? inGameName : name;
+
+        Style originalStyle = original.getStyle();
+        MutableComponent newText;
+        ComponentContents content = original.getContents();
+
+        if (content instanceof PlainTextContents plain) {
+            String string = plain.text();
+
+            if (string.contains(targetName)) {
+                newText = Component.empty();
+                int lastIndex = 0;
+                int index;
+
+                while ((index = string.indexOf(targetName, lastIndex)) != -1) {
+                    if (index > lastIndex)
+                        newText.append(Component.literal(string.substring(lastIndex, index)).setStyle(originalStyle));
+
+                    MutableComponent namePart = Component.literal(targetName).setStyle(originalStyle);
+                    newText.append(getFullName(namePart));
+
+                    lastIndex = index + targetName.length();
+                }
+
+                if (lastIndex < string.length())
+                    newText.append(Component.literal(string.substring(lastIndex)).setStyle(originalStyle));
+            } else {
+                newText = Component.literal(string).setStyle(originalStyle);
+            }
+        } else if (content instanceof TranslatableContents translatableTextContent) {
+            Object[] args = translatableTextContent.getArgs();
+            Object[] newArgs = new Object[args.length];
+
+            for (int i = 0; i < args.length; i++) {
+                if (args[i] instanceof Component text)
+                    newArgs[i] = deepReplace(text);
+                else if (args[i] instanceof String string)
+                    newArgs[i] = deepReplace(Component.literal(string).setStyle(originalStyle));
+                else
+                    newArgs[i] = args[i];
+            }
+            newText = Component.translatable(translatableTextContent.getKey(), newArgs).setStyle(originalStyle);
+        } else {
+            newText = original.plainCopy().setStyle(originalStyle);
+        }
+
+        for (Component sibling : original.getSiblings())
+            newText.append(deepReplace(sibling));
+
+        return deepReplaceName = newText;
+    }
+
+    @Override
+    public String toString() {
+        return name + "'sPlayerProfile{" +
+                "\nstatus=" + status +
+                "\nimageSaved=" + imageSaved +
+                "\nnumberOfImageRequests=" + numberOfImageRequests +
+                "\ninGameName=" + (inGameName != null ? inGameName : "null") +
+                "\nnameChanged=" + nameChanged +
+                "\nuuid=" + (uuid != null ? uuid : "null") +
+                "\ntoAppendLeft=" + (toAppendLeft != null ? toAppendLeft.getString() : "null") +
+                "\ntoAppendRight=" + (toAppendRight != null ? toAppendRight.getString() : "null") +
+                "\nfullName=" + (fullName != null ? fullName.getString() : "null") +
+                "\ndeepReplaceName=" + (deepReplaceName != null ? deepReplaceName.getString() : "null") +
+                "\nnumberOfRequests=" + numberOfRequests +
+                "\nregular=" + regular +
+                "\n\nprofileMCTiers=" + (profileMCTiers != null ? profileMCTiers : "null") +
+                "\n\nprofilePvPTiers=" + (profilePvPTiers != null ? profilePvPTiers : "null") +
+                "\n\nprofileSubtiers=" + (profileSubtiers != null ? profileSubtiers : "null") +
+                "}\n\n\n--- NEXT ---\n\n\n";
     }
 }

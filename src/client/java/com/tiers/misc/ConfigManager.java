@@ -6,9 +6,8 @@ import com.tiers.TiersClient;
 import com.tiers.textures.Icons;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.client.toast.SystemToast;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.network.chat.Component;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -90,15 +89,15 @@ public class ConfigManager {
             TiersClient.activeSubtiersMode = config.activeSubtiersMode;
 
         if (config.version == null) {
-            ClientTickEvents.END_CLIENT_TICK.register(minecraftClient -> {
+            ClientTickEvents.END_CLIENT_TICK.register(minecraft -> {
                 if (upgradeAdjustmentDone)
                     return;
 
-                if (minecraftClient.currentScreen instanceof TitleScreen) {
+                if (minecraft.screen instanceof net.minecraft.client.gui.screens.TitleScreen) {
                     launchTickCounter++;
 
                     if (launchTickCounter >= 20) {
-                        minecraftClient.getToastManager().add(SystemToast.create(minecraftClient, SystemToast.Type.NARRATOR_TOGGLE, Text.of("Thanks for updating Tiers"), Text.of("Some settings may have changed")));
+                        SystemToast.add(minecraft.getToastManager(), SystemToast.SystemToastId.NARRATOR_TOGGLE, Component.literal("Thanks for updating Tiers"), Component.literal("Some settings may have changed"));
                         TiersClient.toggleMod = true;
                         TiersClient.toggleIcons = true;
                         TiersClient.toggleTab = true;
@@ -176,5 +175,25 @@ public class ConfigManager {
         } finally {
             TiersClient.updateAllTags();
         }
+    }
+
+    public static String getCurrentConfig() {
+        return "\nConfig{" +
+                "\ntoggleMod=" + config.toggleMod +
+                "\ntoggleIcons=" + config.toggleIcons +
+                "\ntoggleTab=" + config.toggleTab +
+                "\ntoggleChat=" + config.toggleChat +
+                "\ntoggleAdaptiveSeparator=" + config.toggleAdaptiveSeparator +
+                "\ntoggleAutoKitDetect=" + config.toggleAutoKitDetect +
+                "\ndisplayMode=" + config.displayMode +
+                "\nactiveIcons=" + config.activeIcons +
+                "\npositionMCTiers=" + config.positionMCTiers +
+                "\nactiveMCTiersMode=" + config.activeMCTiersMode +
+                "\npositionPvPTiers=" + config.positionPvPTiers +
+                "\nactivePvPTiersMode=" + config.activePvPTiersMode +
+                "\npositionSubtiers=" + config.positionSubtiers +
+                "\nactiveSubtiersMode=" + config.activeSubtiersMode +
+                "\nversion=" + config.version +
+                "\n}";
     }
 }
