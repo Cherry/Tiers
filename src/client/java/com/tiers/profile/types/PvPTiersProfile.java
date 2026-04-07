@@ -4,7 +4,6 @@ import com.tiers.misc.Mode;
 import com.tiers.profile.GameMode;
 import net.minecraft.resources.Identifier;
 
-
 public class PvPTiersProfile extends SuperProfile {
     public static final Identifier PVPTIERS_IMAGE = Identifier.fromNamespaceAndPath("minecraft", "textures/pvptiers_logo.png");
 

@@ -4,7 +4,6 @@ import com.tiers.misc.ConfigManager;
 import com.tiers.misc.Mode;
 import com.tiers.textures.Icons;
 import net.minecraft.client.Minecraft;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
@@ -28,112 +27,112 @@ public class InventoryChecker {
         Mode oldActiveSubtiersMode = TiersClient.activeSubtiersMode;
         Mode detected = null;
 
-        Inventory Inventory = minecraft.player.getInventory();
+        Inventory inventory = minecraft.player.getInventory();
 
-        if (checkVanilla(Inventory)) {
+        if (checkVanilla(inventory)) {
             TiersClient.activeMCTiersMode = Mode.MCTIERS_VANILLA;
             TiersClient.activePvPTiersMode = Mode.PVPTIERS_CRYSTAL;
             detected = Mode.MCTIERS_VANILLA;
         }
 
-        if (checkSword(Inventory)) {
+        if (checkSword(inventory)) {
             TiersClient.activeMCTiersMode = Mode.MCTIERS_SWORD;
             TiersClient.activePvPTiersMode = Mode.PVPTIERS_SWORD;
             detected = Mode.MCTIERS_SWORD;
         }
 
-        if (checkUhc(Inventory)) {
+        if (checkUhc(inventory)) {
             TiersClient.activeMCTiersMode = Mode.MCTIERS_UHC;
             TiersClient.activePvPTiersMode = Mode.PVPTIERS_UHC;
             detected = Mode.MCTIERS_UHC;
         }
 
-        if (checkPot(Inventory)) {
+        if (checkPot(inventory)) {
             TiersClient.activeMCTiersMode = Mode.MCTIERS_POT;
             TiersClient.activePvPTiersMode = Mode.PVPTIERS_POT;
             detected = Mode.MCTIERS_POT;
         }
 
-        if (checkNethPot(Inventory)) {
+        if (checkNethPot(inventory)) {
             TiersClient.activeMCTiersMode = Mode.MCTIERS_NETH_OP;
             TiersClient.activePvPTiersMode = Mode.PVPTIERS_NETH_POT;
             detected = Mode.MCTIERS_NETH_OP;
         }
 
-        if (checkSmp(Inventory)) {
+        if (checkSmp(inventory)) {
             TiersClient.activeMCTiersMode = Mode.MCTIERS_SMP;
             TiersClient.activePvPTiersMode = Mode.PVPTIERS_SMP;
             detected = Mode.MCTIERS_SMP;
         }
 
-        if (checkAxe(Inventory)) {
+        if (checkAxe(inventory)) {
             TiersClient.activeMCTiersMode = Mode.MCTIERS_AXE;
             TiersClient.activePvPTiersMode = Mode.PVPTIERS_AXE;
             detected = Mode.MCTIERS_AXE;
         }
 
-        if (checkMace(Inventory)) {
+        if (checkMace(inventory)) {
             TiersClient.activeMCTiersMode = Mode.MCTIERS_MACE;
             TiersClient.activePvPTiersMode = Mode.PVPTIERS_MACE;
             detected = Mode.MCTIERS_MACE;
         }
 
-        if (checkMinecart(Inventory)) {
+        if (checkMinecart(inventory)) {
             TiersClient.activeSubtiersMode = Mode.SUBTIERS_MINECART;
             detected = Mode.SUBTIERS_MINECART;
         }
 
-        if (checkDiamondVanilla(Inventory)) {
+        if (checkDiamondVanilla(inventory)) {
             TiersClient.activeSubtiersMode = Mode.SUBTIERS_DIAMOND_VANILLA;
             detected = Mode.SUBTIERS_DIAMOND_VANILLA;
         }
 
-        if (checkDeBuff(Inventory)) {
+        if (checkDeBuff(inventory)) {
             TiersClient.activeSubtiersMode = Mode.SUBTIERS_DEBUFF;
             detected = Mode.SUBTIERS_DEBUFF;
         }
 
-        if (checkSubtiersElytra(Inventory)) {
+        if (checkSubtiersElytra(inventory)) {
             TiersClient.activeSubtiersMode = Mode.SUBTIERS_ELYTRA;
             detected = Mode.SUBTIERS_ELYTRA;
         }
 
-        if (checkSpeed(Inventory)) {
+        if (checkSpeed(inventory)) {
             TiersClient.activeSubtiersMode = Mode.SUBTIERS_SPEED;
             detected = Mode.SUBTIERS_SPEED;
         }
 
-        if (checkCreeper(Inventory)) {
+        if (checkCreeper(inventory)) {
             TiersClient.activeSubtiersMode = Mode.SUBTIERS_CREEPER;
             detected = Mode.SUBTIERS_CREEPER;
         }
 
-        if (checkManhunt(Inventory)) {
+        if (checkManhunt(inventory)) {
             TiersClient.activeSubtiersMode = Mode.SUBTIERS_MANHUNT;
             detected = Mode.SUBTIERS_MANHUNT;
         }
 
-        if (checkDiamondSmp(Inventory)) {
+        if (checkDiamondSmp(inventory)) {
             TiersClient.activeSubtiersMode = Mode.SUBTIERS_DIAMOND_SMP;
             detected = Mode.SUBTIERS_DIAMOND_SMP;
         }
 
-        if (checkBow(Inventory)) {
+        if (checkBow(inventory)) {
             TiersClient.activeSubtiersMode = Mode.SUBTIERS_BOW;
             detected = Mode.SUBTIERS_BOW;
         }
 
-        if (checkBed(Inventory)) {
+        if (checkBed(inventory)) {
             TiersClient.activeSubtiersMode = Mode.SUBTIERS_BED;
             detected = Mode.SUBTIERS_BED;
         }
 
-        if (checkOgVanilla(Inventory)) {
+        if (checkOgVanilla(inventory)) {
             TiersClient.activeSubtiersMode = Mode.SUBTIERS_OG_VANILLA;
             detected = Mode.SUBTIERS_OG_VANILLA;
         }
 
-        if (checkTrident(Inventory)) {
+        if (checkTrident(inventory)) {
             TiersClient.activeSubtiersMode = Mode.SUBTIERS_TRIDENT;
             detected = Mode.SUBTIERS_TRIDENT;
         }
@@ -145,7 +144,7 @@ public class InventoryChecker {
             TiersClient.sendMessageToPlayer(Icons.colorText("No gamemode detected", "red"), true);
     }
 
-    private static boolean checkVanilla(Inventory Inventory) {
+    private static boolean checkVanilla(Inventory inventory) {
         boolean hasObsidian = false;
         boolean hasCrystal = false;
         boolean hasAnchor = false;
@@ -156,8 +155,8 @@ public class InventoryChecker {
         boolean hasLeggings = false;
         boolean hasBoots = false;
 
-        for (int i = 0; i < Inventory.getContainerSize(); i++) {
-            ItemStack stack = Inventory.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
 
             hasObsidian |= hasItem(stack, Items.OBSIDIAN);
             hasCrystal |= hasItem(stack, Items.END_CRYSTAL);
@@ -173,15 +172,15 @@ public class InventoryChecker {
         return hasObsidian && hasCrystal && hasAnchor && hasGlowstone && hasSword && hasHelmet && hasChestplate && hasLeggings && hasBoots;
     }
 
-    private static boolean checkSword(Inventory Inventory) {
+    private static boolean checkSword(Inventory inventory) {
         boolean hasSword = false;
         boolean hasHelmet = false;
         boolean hasChestplate = false;
         boolean hasLeggings = false;
         boolean hasBoots = false;
 
-        for (int i = 0; i < Inventory.getContainerSize(); i++) {
-            ItemStack stack = Inventory.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
 
             hasSword |= hasItem(stack, Items.DIAMOND_SWORD);
             hasHelmet |= hasItem(stack, Items.DIAMOND_HELMET);
@@ -195,7 +194,7 @@ public class InventoryChecker {
         return hasSword && hasHelmet && hasChestplate && hasLeggings && hasBoots;
     }
 
-    private static boolean checkUhc(Inventory Inventory) {
+    private static boolean checkUhc(Inventory inventory) {
         boolean hasShield = false;
         boolean hasGaps = false;
         boolean hasLava = false;
@@ -210,8 +209,8 @@ public class InventoryChecker {
         boolean hasEnchantedLeggings = false;
         boolean hasEnchantedBoots = false;
 
-        for (int i = 0; i < Inventory.getContainerSize(); i++) {
-            ItemStack stack = Inventory.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
 
             hasShield |= hasItem(stack, Items.SHIELD);
             hasGaps |= hasItem(stack, Items.GOLDEN_APPLE);
@@ -234,7 +233,7 @@ public class InventoryChecker {
                 hasEnchantedAxe && hasEnchantedHelmet && hasEnchantedChestplate && hasEnchantedLeggings && hasEnchantedBoots;
     }
 
-    private static boolean checkPot(Inventory Inventory) {
+    private static boolean checkPot(Inventory inventory) {
         boolean hasSteak = false;
         boolean hasPotions = false;
         boolean hasEnchantedSword = false;
@@ -243,8 +242,8 @@ public class InventoryChecker {
         boolean hasEnchantedLeggings = false;
         boolean hasEnchantedBoots = false;
 
-        for (int i = 0; i < Inventory.getContainerSize(); i++) {
-            ItemStack stack = Inventory.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
 
             hasSteak |= hasItem(stack, Items.COOKED_BEEF);
             hasPotions |= hasItem(stack, Items.SPLASH_POTION);
@@ -260,7 +259,7 @@ public class InventoryChecker {
         return hasSteak && hasPotions && hasEnchantedSword && hasEnchantedHelmet && hasEnchantedChestplate && hasEnchantedLeggings && hasEnchantedBoots;
     }
 
-    private static boolean checkNethPot(Inventory Inventory) {
+    private static boolean checkNethPot(Inventory inventory) {
         boolean hasGaps = false;
         boolean hasPotions = false;
         boolean hasTotem = false;
@@ -271,8 +270,8 @@ public class InventoryChecker {
         boolean hasEnchantedLeggings = false;
         boolean hasEnchantedBoots = false;
 
-        for (int i = 0; i < Inventory.getContainerSize(); i++) {
-            ItemStack stack = Inventory.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
 
             hasGaps |= hasItem(stack, Items.GOLDEN_APPLE);
             hasPotions |= hasItem(stack, Items.SPLASH_POTION);
@@ -291,7 +290,7 @@ public class InventoryChecker {
                 hasEnchantedChestplate && hasEnchantedLeggings && hasEnchantedBoots;
     }
 
-    private static boolean checkSmp(Inventory Inventory) {
+    private static boolean checkSmp(Inventory inventory) {
         boolean hasGaps = false;
         boolean hasPotions = false;
         boolean hasTotem = false;
@@ -305,8 +304,8 @@ public class InventoryChecker {
         boolean hasEnchantedLeggings = false;
         boolean hasEnchantedBoots = false;
 
-        for (int i = 0; i < Inventory.getContainerSize(); i++) {
-            ItemStack stack = Inventory.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
 
             hasGaps |= hasItem(stack, Items.GOLDEN_APPLE);
             hasPotions |= hasItem(stack, Items.SPLASH_POTION);
@@ -328,7 +327,7 @@ public class InventoryChecker {
                 hasEnchantedSword && hasEnchantedHelmet && hasEnchantedChestplate && hasEnchantedLeggings && hasEnchantedBoots;
     }
 
-    private static boolean checkAxe(Inventory Inventory) {
+    private static boolean checkAxe(Inventory inventory) {
         boolean hasBow = false;
         boolean hasCrossbow = false;
         boolean hasShield = false;
@@ -339,8 +338,8 @@ public class InventoryChecker {
         boolean hasLeggings = false;
         boolean hasBoots = false;
 
-        for (int i = 0; i < Inventory.getContainerSize(); i++) {
-            ItemStack stack = Inventory.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
 
             hasBow |= hasItem(stack, Items.BOW, false);
             hasCrossbow |= hasItem(stack, Items.CROSSBOW, false);
@@ -358,7 +357,7 @@ public class InventoryChecker {
         return hasBow && hasCrossbow && hasShield && hasSword && hasAxe && hasHelmet && hasChestplate && hasLeggings && hasBoots;
     }
 
-    private static boolean checkMace(Inventory Inventory) {
+    private static boolean checkMace(Inventory inventory) {
         boolean hasGaps = false;
         boolean hasPotions = false;
         boolean hasTotem = false;
@@ -374,8 +373,8 @@ public class InventoryChecker {
         boolean hasEnchantedLeggings = false;
         boolean hasEnchantedBoots = false;
 
-        for (int i = 0; i < Inventory.getContainerSize(); i++) {
-            ItemStack stack = Inventory.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
 
             hasGaps |= hasItem(stack, Items.GOLDEN_APPLE);
             hasPotions |= hasItem(stack, Items.SPLASH_POTION);
@@ -399,7 +398,7 @@ public class InventoryChecker {
                 hasEnchantedSword && hasEnchantedAxe && hasEnchantedHelmet && hasEnchantedChestplate && hasEnchantedLeggings && hasEnchantedBoots;
     }
 
-    private static boolean checkMinecart(Inventory Inventory) {
+    private static boolean checkMinecart(Inventory inventory) {
         boolean hasCart = false;
         boolean hasCobwebs = false;
         boolean hasPotions = false;
@@ -411,8 +410,8 @@ public class InventoryChecker {
         boolean hasEnchantedLeggings = false;
         boolean hasEnchantedBoots = false;
 
-        for (int i = 0; i < Inventory.getContainerSize(); i++) {
-            ItemStack stack = Inventory.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
 
             hasCart |= hasItem(stack, Items.TNT_MINECART);
             hasCobwebs |= hasItem(stack, Items.COBWEB);
@@ -433,7 +432,7 @@ public class InventoryChecker {
                 hasEnchantedChestplate && hasEnchantedLeggings && hasEnchantedBoots;
     }
 
-    private static boolean checkDiamondVanilla(Inventory Inventory) {
+    private static boolean checkDiamondVanilla(Inventory inventory) {
         boolean hasObsidian = false;
         boolean hasCrystal = false;
         boolean hasAnchor = false;
@@ -444,8 +443,8 @@ public class InventoryChecker {
         boolean hasLeggings = false;
         boolean hasBoots = false;
 
-        for (int i = 0; i < Inventory.getContainerSize(); i++) {
-            ItemStack stack = Inventory.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
 
             hasObsidian |= hasItem(stack, Items.OBSIDIAN);
             hasCrystal |= hasItem(stack, Items.END_CRYSTAL);
@@ -463,7 +462,7 @@ public class InventoryChecker {
         return hasObsidian && hasCrystal && hasAnchor && hasGlowstone && hasSword && hasHelmet && hasChestplate && hasLeggings && hasBoots;
     }
 
-    private static boolean checkDeBuff(Inventory Inventory) {
+    private static boolean checkDeBuff(Inventory inventory) {
         boolean hasPots = false;
         boolean hasGoldenCarrots = false;
         boolean hasPearls = false;
@@ -474,8 +473,8 @@ public class InventoryChecker {
         boolean hasLeggings = false;
         boolean hasBoots = false;
 
-        for (int i = 0; i < Inventory.getContainerSize(); i++) {
-            ItemStack stack = Inventory.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
 
             hasPots |= hasItem(stack, Items.SPLASH_POTION);
             hasGoldenCarrots |= hasItem(stack, Items.GOLDEN_CARROT);
@@ -493,7 +492,7 @@ public class InventoryChecker {
         return hasPots && hasGoldenCarrots && hasPearls && hasCrossbow && hasSword && hasHelmet && hasChestplate && hasLeggings && hasBoots;
     }
 
-    private static boolean checkSubtiersElytra(Inventory Inventory) {
+    private static boolean checkSubtiersElytra(Inventory inventory) {
         boolean hasCobweb = false;
         boolean hasPots = false;
         boolean hasGaps = false;
@@ -508,8 +507,8 @@ public class InventoryChecker {
         boolean hasAxe = false;
         boolean hasChestplate = false;
 
-        for (int i = 0; i < Inventory.getContainerSize(); i++) {
-            ItemStack stack = Inventory.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
 
             hasCobweb |= hasItem(stack, Items.COBWEB);
             hasPots |= hasItem(stack, Items.SPLASH_POTION);
@@ -532,15 +531,15 @@ public class InventoryChecker {
                 hasBow && hasElytra && hasMace && hasSword && hasAxe && hasChestplate;
     }
 
-    private static boolean checkSpeed(Inventory Inventory) {
+    private static boolean checkSpeed(Inventory inventory) {
         boolean hasSword = false;
         boolean hasHelmet = false;
         boolean hasChestplate = false;
         boolean hasLeggings = false;
         boolean hasBoots = false;
 
-        for (int i = 0; i < Inventory.getContainerSize(); i++) {
-            ItemStack stack = Inventory.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
 
             hasSword |= hasItem(stack, Items.DIAMOND_SWORD, false);
             hasHelmet |= hasItem(stack, Items.DIAMOND_HELMET, true);
@@ -554,7 +553,7 @@ public class InventoryChecker {
         return hasSword && hasHelmet && hasChestplate && hasLeggings && hasBoots;
     }
 
-    private static boolean checkCreeper(Inventory Inventory) {
+    private static boolean checkCreeper(Inventory inventory) {
         boolean hasCobweb = false;
         boolean hasCreeper = false;
         boolean hasWater = false;
@@ -572,8 +571,8 @@ public class InventoryChecker {
         boolean hasLeggings = false;
         boolean hasBoots = false;
 
-        for (int i = 0; i < Inventory.getContainerSize(); i++) {
-            ItemStack stack = Inventory.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
 
             hasCobweb |= hasItem(stack, Items.COBWEB);
             hasCreeper |= hasItem(stack, Items.CREEPER_SPAWN_EGG);
@@ -599,7 +598,7 @@ public class InventoryChecker {
                 hasBow && hasShield && hasSword && hasAxe && hasHelmet && hasChestplate && hasLeggings && hasBoots;
     }
 
-    private static boolean checkManhunt(Inventory Inventory) {
+    private static boolean checkManhunt(Inventory inventory) {
         boolean hasCobweb = false;
         boolean hasWater = false;
         boolean hasLava = false;
@@ -619,8 +618,8 @@ public class InventoryChecker {
         boolean hasLeggings = false;
         boolean hasBoots = false;
 
-        for (int i = 0; i < Inventory.getContainerSize(); i++) {
-            ItemStack stack = Inventory.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
 
             hasCobweb |= hasItem(stack, Items.COBWEB);
             hasWater |= hasItem(stack, Items.WATER_BUCKET);
@@ -648,7 +647,7 @@ public class InventoryChecker {
                 hasCrossbow && hasBow && hasShield && hasSword && hasAxe && hasHelmet && hasChestplate && hasLeggings && hasBoots;
     }
 
-    private static boolean checkDiamondSmp(Inventory Inventory) {
+    private static boolean checkDiamondSmp(Inventory inventory) {
         boolean hasGaps = false;
         boolean hasWater = false;
         boolean hasCobweb = false;
@@ -665,8 +664,8 @@ public class InventoryChecker {
         boolean hasEnchantedLeggings = false;
         boolean hasEnchantedBoots = false;
 
-        for (int i = 0; i < Inventory.getContainerSize(); i++) {
-            ItemStack stack = Inventory.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
 
             hasGaps |= hasItem(stack, Items.GOLDEN_APPLE);
             hasWater |= hasItem(stack, Items.WATER_BUCKET);
@@ -691,7 +690,7 @@ public class InventoryChecker {
                 hasEnchantedSword && hasEnchantedHelmet && hasEnchantedChestplate && hasEnchantedLeggings && hasEnchantedBoots;
     }
 
-    private static boolean checkBow(Inventory Inventory) {
+    private static boolean checkBow(Inventory inventory) {
         boolean hasBow = false;
         boolean hasArrow = false;
         boolean hasEnchantedHelmet = false;
@@ -699,8 +698,8 @@ public class InventoryChecker {
         boolean hasEnchantedLeggings = false;
         boolean hasEnchantedBoots = false;
 
-        for (int i = 0; i < Inventory.getContainerSize(); i++) {
-            ItemStack stack = Inventory.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
 
             hasBow |= hasItem(stack, Items.BOW, true);
             hasArrow |= hasItem(stack, Items.ARROW);
@@ -715,7 +714,7 @@ public class InventoryChecker {
         return hasBow && hasArrow && hasEnchantedHelmet && hasEnchantedChestplate && hasEnchantedLeggings && hasEnchantedBoots;
     }
 
-    private static boolean checkBed(Inventory Inventory) {
+    private static boolean checkBed(Inventory inventory) {
         boolean hasTotem = false;
         boolean hasXp = false;
         boolean hasPearls = false;
@@ -729,8 +728,8 @@ public class InventoryChecker {
         boolean hasEnchantedLeggings = false;
         boolean hasEnchantedBoots = false;
 
-        for (int i = 0; i < Inventory.getContainerSize(); i++) {
-            ItemStack stack = Inventory.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
 
             hasTotem |= hasItem(stack, Items.TOTEM_OF_UNDYING);
             hasXp |= hasItem(stack, Items.EXPERIENCE_BOTTLE);
@@ -753,7 +752,7 @@ public class InventoryChecker {
                 hasEnchantedChestplate && hasEnchantedLeggings && hasEnchantedBoots;
     }
 
-    private static boolean checkOgVanilla(Inventory Inventory) {
+    private static boolean checkOgVanilla(Inventory inventory) {
         boolean hasSteak = false;
         boolean hasGaps = false;
         boolean hasPotions = false;
@@ -766,8 +765,8 @@ public class InventoryChecker {
         boolean hasEnchantedLeggings = false;
         boolean hasEnchantedBoots = false;
 
-        for (int i = 0; i < Inventory.getContainerSize(); i++) {
-            ItemStack stack = Inventory.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
 
             hasSteak |= hasItem(stack, Items.COOKED_BEEF);
             hasGaps |= hasItem(stack, Items.GOLDEN_APPLE);
@@ -787,7 +786,7 @@ public class InventoryChecker {
         return hasSteak && hasGaps && hasPotions && hasPearls && hasEnchantedBow && hasEnchantedSword && hasEnchantedPickaxe && hasEnchantedHelmet && hasEnchantedChestplate && hasEnchantedLeggings && hasEnchantedBoots;
     }
 
-    private static boolean checkTrident(Inventory Inventory) {
+    private static boolean checkTrident(Inventory inventory) {
         boolean hasCobweb = false;
         boolean hasWater = false;
         boolean hasGaps = false;
@@ -800,8 +799,8 @@ public class InventoryChecker {
         boolean hasLeggings = false;
         boolean hasBoots = false;
 
-        for (int i = 0; i < Inventory.getContainerSize(); i++) {
-            ItemStack stack = Inventory.getItem(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
 
             hasCobweb |= hasItem(stack, Items.COBWEB);
             hasWater |= hasItem(stack, Items.WATER_BUCKET);

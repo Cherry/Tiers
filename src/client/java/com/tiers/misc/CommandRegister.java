@@ -23,14 +23,12 @@ public class CommandRegister {
         if (minecraft.level == null || minecraft.getConnection() == null)
             return suggestionsBuilder.buildFuture();
 
-        for (PlayerInfo playerInfo : minecraft.getConnection().getOnlinePlayers())
-            if (SharedSuggestionProvider.matchesSubStr(suggestionsBuilder.getRemaining().toLowerCase(Locale.ROOT), playerInfo.getProfile().name().toLowerCase(Locale.ROOT)) && playerInfo.getProfile().name().length() > 2)
-                suggestionsBuilder.suggest(playerInfo.getProfile().name(), () -> "Search tiers for " + playerInfo.getProfile().name());
+        for (PlayerInfo playerListEntry : minecraft.getConnection().getOnlinePlayers())
+            if (SharedSuggestionProvider.matchesSubStr(suggestionsBuilder.getRemaining().toLowerCase(Locale.ROOT), playerListEntry.getProfile().name().toLowerCase(Locale.ROOT)) && playerListEntry.getProfile().name().length() > 2)
+                suggestionsBuilder.suggest(playerListEntry.getProfile().name(), () -> "Search tiers for " + playerListEntry.getProfile().name());
 
         if (SharedSuggestionProvider.matchesSubStr(suggestionsBuilder.getRemaining().toLowerCase(Locale.ROOT), "-config"))
             suggestionsBuilder.suggest("-config", () -> "Open Tiers config screen");
-        if (SharedSuggestionProvider.matchesSubStr(suggestionsBuilder.getRemaining().toLowerCase(Locale.ROOT), "-toggle"))
-            suggestionsBuilder.suggest("-toggle", () -> "Toggle " + (TiersClient.toggleMod ? "off" : "on") + " Tiers");
 
         return suggestionsBuilder.buildFuture();
     }

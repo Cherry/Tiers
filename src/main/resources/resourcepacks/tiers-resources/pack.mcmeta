@@ -2,8 +2,8 @@
   "pack": {
     "pack_format": 29,
     "description": "Icons and colors for Tiers",
-    "supported_formats": [29, 84],
+    "supported_formats": [29, 75],
     "min_format": 29,
-    "max_format": 84
+    "max_format": 75
   }
 }

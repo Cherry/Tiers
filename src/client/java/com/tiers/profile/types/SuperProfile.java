@@ -2,25 +2,41 @@ package com.tiers.profile.types;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.tiers.TiersClient;
 import com.tiers.misc.Mode;
 import com.tiers.profile.GameMode;
 import com.tiers.profile.Status;
 import com.tiers.textures.Icons;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.CommonColors;
 
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.tiers.TiersClient.updateAllTags;
-import static com.tiers.TiersClient.userAgent;
+import static com.tiers.TiersClient.*;
 
 public class SuperProfile {
+    private static final ScheduledExecutorService updateAndRecoverFailedRequestsScheduler = Executors.newSingleThreadScheduledExecutor();
+    public static final CopyOnWriteArrayList<SuperProfile> failedSuperProfiles = new CopyOnWriteArrayList<>();
+    public static final AtomicInteger MCTiersRequests = new AtomicInteger(0);
+    public static final AtomicInteger PvPTiersRequests = new AtomicInteger(0);
+    public static final AtomicInteger SubtiersRequests = new AtomicInteger(0);
+    public static final AtomicInteger failedMCTiersRequests = new AtomicInteger(0);
+    public static final AtomicInteger failedPvPTiersRequests = new AtomicInteger(0);
+    public static final AtomicInteger failedSubtiersRequests = new AtomicInteger(0);
+    public static final AtomicInteger failedMCTiersRequestsLastMinute = new AtomicInteger(0);
+    public static final AtomicInteger failedPvPTiersRequestsLastMinute = new AtomicInteger(0);
+    public static final AtomicInteger failedSubtiersRequestsLastMinute = new AtomicInteger(0);
+    public static boolean isMCTiersDown = false;
+    public static boolean isPvPTiersDown = false;
+    public static boolean isSubtiersDown = false;
+    public static int numberOfMessages;
+
     public Status status = Status.SEARCHING;
     private int numberOfRequests;
 
@@ -37,14 +53,85 @@ public class SuperProfile {
     public GameMode highest;
 
     public String originalJson;
+    public String apiUrl;
+    public String uuid;
     public boolean drawn;
+    public boolean apiErrorShown;
+    private Runnable onUpdate;
 
     protected SuperProfile() {
+        if (this instanceof MCTiersProfile)
+            MCTiersRequests.incrementAndGet();
+        if (this instanceof PvPTiersProfile)
+            PvPTiersRequests.incrementAndGet();
+        if (this instanceof SubtiersProfile)
+            SubtiersRequests.incrementAndGet();
     }
 
-    protected void buildRequest(String apiUrl, String uuid, String extra) {
-        if (numberOfRequests == 5 || status != Status.SEARCHING) {
+    static {
+        updateAndRecoverFailedRequestsScheduler.scheduleAtFixedRate(SuperProfile::updateAndRecoverFailedRequests, 0, 1, TimeUnit.MINUTES);
+        updateAndRecoverFailedRequestsScheduler.scheduleAtFixedRate(SuperProfile::updateDownStatus, 0, 1, TimeUnit.SECONDS);
+    }
+
+    private static void updateDownStatus() {
+        isMCTiersDown = failedMCTiersRequestsLastMinute.get() > 3;
+        isPvPTiersDown = failedPvPTiersRequestsLastMinute.get() > 3;
+        isSubtiersDown = failedSubtiersRequestsLastMinute.get() > 3;
+    }
+
+    private static void updateAndRecoverFailedRequests() {
+        failedMCTiersRequestsLastMinute.set(0);
+        failedPvPTiersRequestsLastMinute.set(0);
+        failedSubtiersRequestsLastMinute.set(0);
+
+        for (SuperProfile superProfile : SuperProfile.failedSuperProfiles) {
+            if (superProfile instanceof MCTiersProfile && isMCTiersDown)
+                continue;
+            if (superProfile instanceof PvPTiersProfile && isPvPTiersDown)
+                continue;
+            if (superProfile instanceof SubtiersProfile && isSubtiersDown)
+                continue;
+
+            SuperProfile.failedSuperProfiles.remove(superProfile);
+            superProfile.prepareToRebuild();
+            superProfile.buildRequest(superProfile.apiUrl, superProfile.uuid, "");
+            try {
+                Thread.sleep(150);
+            } catch (InterruptedException interruptedException) {
+                TiersClient.LOGGER.error("Error while recovering failed super profile. Details: {}\n{}", interruptedException.getMessage(), superProfile);
+            }
+        }
+    }
+
+    public void prepareToRebuild() {
+        status = Status.SEARCHING;
+        numberOfRequests = 0;
+
+        if (this instanceof MCTiersProfile) {
+            MCTiersRequests.incrementAndGet();
+            failedMCTiersRequests.decrementAndGet();
+        }
+        if (this instanceof PvPTiersProfile) {
+            PvPTiersRequests.incrementAndGet();
+            failedPvPTiersRequests.decrementAndGet();
+        }
+        if (this instanceof SubtiersProfile) {
+            SubtiersRequests.incrementAndGet();
+            failedSubtiersRequests.decrementAndGet();
+        }
+    }
+
+    public void buildRequest(String apiUrl, String uuid, String extra) {
+        if (apiUrl == null || uuid == null || extra == null) {
+            status = Status.API_ISSUE;
+            return;
+        }
+        this.apiUrl = apiUrl;
+        this.uuid = uuid;
+
+        if (numberOfRequests >= 5 || status != Status.SEARCHING) {
             status = Status.TIMEOUTED;
+            failedRequest();
             return;
         }
 
@@ -53,26 +140,31 @@ public class SuperProfile {
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(apiUrl + uuid + extra))
                 .header("User-Agent", userAgent)
-                .timeout(Duration.ofSeconds(4))
+                .timeout(Duration.ofSeconds(3))
                 .GET()
                 .build();
 
-        try (HttpClient httpClient = HttpClient.newHttpClient()) {
-            httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString()).thenAccept(response -> {
-                if (response.statusCode() == 404) {
-                    status = Status.NOT_EXISTING;
-                    return;
-                } else if (response.statusCode() != 200) {
-                    status = Status.API_ISSUE;
-                    return;
-                }
+        httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString()).thenAccept(response -> {
+            int statusCode = response.statusCode();
+            if (statusCode == 404) {
+                status = Status.NOT_EXISTING;
+                return;
+            } else if (statusCode == 502 || statusCode == 525) {
+                numberOfRequests++;
+                CompletableFuture.delayedExecutor(2, TimeUnit.SECONDS).execute(() -> buildRequest(apiUrl, uuid, extra));
+                return;
+            } else if (statusCode != 200) {
+                status = Status.API_ISSUE;
+                failedRequest();
+                LOGGER.info("Tiers | Request failed ({}) | Code: {} | Body: {}", apiUrl + uuid + extra, statusCode, response.body());
+                return;
+            }
 
-                parseJson(response.body());
-            }).exceptionally(ignored -> {
-                CompletableFuture.delayedExecutor(100, TimeUnit.MILLISECONDS).execute(() -> buildRequest(uuid, apiUrl, extra));
-                return null;
-            });
-        }
+            parseJson(response.body());
+        }).exceptionally(ignored -> {
+            CompletableFuture.delayedExecutor(100, TimeUnit.MILLISECONDS).execute(() -> buildRequest(apiUrl, uuid, extra));
+            return null;
+        });
     }
 
     public void parseJson(String json) {
@@ -84,7 +176,7 @@ public class SuperProfile {
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
 
         if (jsonObject.has("name") && jsonObject.has("region") &&
-                jsonObject.has("points") && jsonObject.has("overall") && jsonObject.has("rankings")) {
+                jsonObject.has("points") && jsonObject.has("overall") && jsonObject.has("rankings") && jsonObject.get("rankings").isJsonObject()) {
             if (!jsonObject.get("region").isJsonNull())
                 region = jsonObject.get("region").getAsString();
             else
@@ -105,7 +197,9 @@ public class SuperProfile {
 
         status = Status.READY;
         originalJson = json;
-        updateAllTags();
+
+        if (onUpdate != null)
+            onUpdate.run();
     }
 
     private void parseRankings(JsonObject jsonObject) {
@@ -209,11 +303,78 @@ public class SuperProfile {
         return Component.literal(overallTooltip).setStyle(displayedOverall.getStyle());
     }
 
+    private void failedRequest() {
+        String message = null;
+        synchronized (SuperProfile.class) {
+            if (this instanceof MCTiersProfile) {
+                failedMCTiersRequestsLastMinute.incrementAndGet();
+                if (failedMCTiersRequests.incrementAndGet() % 20 == 0)
+                    message = "[Tiers] MCTiers might be down. " + failedMCTiersRequests + " searches (out of " + MCTiersRequests + ") failed so far. Use '/tiers -status' for more info";
+            }
+            if (this instanceof PvPTiersProfile) {
+                failedPvPTiersRequestsLastMinute.incrementAndGet();
+                if (failedPvPTiersRequests.incrementAndGet() % 20 == 0)
+                    message = "[Tiers] PvPTiers might be down. " + failedPvPTiersRequests + " searches (out of " + PvPTiersRequests + ") failed so far. Use '/tiers -status' for more info";
+            }
+            if (this instanceof SubtiersProfile) {
+                failedSubtiersRequestsLastMinute.incrementAndGet();
+                if (failedSubtiersRequests.incrementAndGet() % 20 == 0)
+                    message = "[Tiers] Subtiers might be down. " + failedSubtiersRequests + " searches (out of " + SubtiersRequests + ") failed so far. Use '/tiers -status' for more info";
+            }
+        }
+
+        failedSuperProfiles.add(this);
+
+        if (message != null) {
+            TiersClient.LOGGER.info(message);
+            if (numberOfMessages < 5) {
+                Component textMessage = Icons.colorText(message, CommonColors.YELLOW);
+
+                sendMessageToPlayer(textMessage, false);
+                numberOfMessages++;
+            }
+        }
+    }
+
+    public String[] checkOutages() {
+        String[] message = new String[3];
+        if (this instanceof MCTiersProfile) {
+            message[0] = "MCTiers might be down";
+            message[1] = failedMCTiersRequests + " searches (out of " + MCTiersRequests + " profiles) failed so far";
+        }
+
+        if (this instanceof PvPTiersProfile) {
+            message[0] = "PvPTiers might be down";
+            message[1] = failedPvPTiersRequests + " searches (out of " + PvPTiersRequests + " profiles) failed so far";
+        }
+        if (this instanceof SubtiersProfile) {
+            message[0] = "Subtiers might be down";
+            message[1] = failedSubtiersRequests + " searches (out of " + SubtiersRequests + " profiles) failed so far";
+        }
+
+        message[2] = "Tiers will automatically try to update all failed requests";
+        return message;
+    }
+
+    public static void resetRequestCounters() {
+        synchronized (SuperProfile.class) {
+            MCTiersRequests.set(0);
+            failedMCTiersRequests.set(0);
+            PvPTiersRequests.set(0);
+            failedPvPTiersRequests.set(0);
+            SubtiersRequests.set(0);
+            failedSubtiersRequests.set(0);
+        }
+    }
+
+    public void setOnUpdate(Runnable onUpdate) {
+        this.onUpdate = onUpdate;
+    }
+
     @Override
     public String toString() {
         StringBuilder gameModesDetails = new StringBuilder();
-        for (GameMode gameMode : gameModes)
-            gameModesDetails.append(gameMode);
+        gameModes.forEach(gameModesDetails::append);
 
         return "\nSuperProfile{" +
                 "\nstatus=" + status +
@@ -226,6 +387,7 @@ public class SuperProfile {
                 "\noverallTooltip=" + (overallTooltip != null ? overallTooltip.getString() : "null") +
                 "\nregionTooltip=" + (regionTooltip != null ? regionTooltip.getString() : "null") +
                 "\ndrawn=" + drawn +
+                "\napiErrorShown=" + apiErrorShown +
                 "\n\ngameModes=" + gameModesDetails +
                 "\n\nhighest=" + (highest != null ? highest : "null") +
                 "\n\noriginalJson=" + (originalJson != null ? originalJson : "null") +

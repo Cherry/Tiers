@@ -9,16 +9,16 @@
   ],
   "license": "GPL-3.0",
   "contact": {
-    "issues": "https://github.com/Flavio6561/Tiers/issues",
-    "homepage": "https://github.com/Flavio6561/Tiers"
+    "issues": "https://github.com/PvPTiers/Tiers/issues",
+    "homepage": "https://github.com/PvPTiers/Tiers"
   },
   "custom": {
     "modmenu": {
       "links": {
-        "GitHub": "https://github.com/Flavio6561/Tiers",
+        "GitHub": "https://github.com/PvPTiers/Tiers",
         "Modrinth page": "https://modrinth.com/mod/tiers",
-        "Changelogs": "https://github.com/Flavio6561/Tiers/wiki/Version-changelogs",
-        "GitHub Issues": "https://github.com/Flavio6561/Tiers/issues"
+        "Changelogs": "https://github.com/PvPTiers/Tiers/wiki/Version-changelogs",
+        "GitHub Issues": "https://github.com/PvPTiers/Tiers/issues"
       }
     }
   },

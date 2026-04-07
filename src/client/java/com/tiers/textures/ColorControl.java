@@ -13,8 +13,7 @@ public class ColorControl {
 
     public static void updateColors(JsonObject jsonObject) {
         colors.clear();
-        for (String key : jsonObject.keySet())
-            colors.put(key, Integer.parseUnsignedInt(jsonObject.get(key).getAsString().replace("#", ""), 16));
+        jsonObject.keySet().forEach(key -> colors.put(key, Integer.parseUnsignedInt(jsonObject.get(key).getAsString().replace("#", ""), 16)));
 
         Icons.GLOBE = Component.literal("\uF000").setStyle(Style.EMPTY.withColor(getColorMinecraftStandard("region")).withFont(new FontDescription.Resource(Identifier.fromNamespaceAndPath("minecraft", "misc"))));
         Icons.OVERALL = Component.literal("\uF001").setStyle(Style.EMPTY.withColor(getColorMinecraftStandard("overall")).withFont(new FontDescription.Resource(Identifier.fromNamespaceAndPath("minecraft", "misc"))));

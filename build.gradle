@@ -10,49 +10,49 @@ version = project.mod_version
 group = project.maven_group
 
 base {
-	archivesName = project.archives_base_name
+    archivesName = project.archives_base_name
 }
 
 repositories {
-    maven {url = "https://maven.shedaniel.me/"}
-    maven {url = "https://maven.terraformersmc.com/releases/"}
+    maven { url = "https://maven.shedaniel.me/" }
+    maven { url = "https://maven.terraformersmc.com/releases/" }
 }
 
 loom {
-	splitEnvironmentSourceSets()
-	mods {
-		"tiers" {
-			sourceSet sourceSets.main
-			sourceSet sourceSets.client
-		}
-	}
+    splitEnvironmentSourceSets()
+    mods {
+        "tiers" {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
 
     implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     api "com.terraformersmc:modmenu:${modmenu_version}"
 }
 
 processResources {
-	inputs.property "version", project.version
+    inputs.property "version", project.version
     inputs.property "minecraft_version", project.minecraft_version
     filesMatching("fabric.mod.json") {
-		expand "version": project.version, minecraft_version: project.minecraft_version
-	}
+        expand "version": project.version, minecraft_version: project.minecraft_version
+    }
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 25
+    it.options.release = 25
 }
 
 java {
-	withSourcesJar()
-	sourceCompatibility = JavaVersion.VERSION_25
-	targetCompatibility = JavaVersion.VERSION_25
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 modrinth {
@@ -60,9 +60,9 @@ modrinth {
     projectId = "bubOj4AD"
     versionNumber = "${project.version}"
     versionName = "Tiers ${project.version}"
-    changelog = "[Version ${project.simple_version}](https://github.com/Flavio6561/Tiers/wiki/Version-changelogs)"
+    changelog = "[Version ${project.simple_version}](https://github.com/PvPTiers/Tiers/wiki/Version-changelogs)"
     uploadFile = jar
-    versionType = "alpha"
+    versionType = "beta"
     gameVersions = [project.minecraft_version]
     loaders = ["fabric", "quilt"]
 

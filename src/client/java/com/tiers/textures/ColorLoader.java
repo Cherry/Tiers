@@ -7,12 +7,15 @@ import com.tiers.TiersClient;
 import com.tiers.profile.PlayerProfile;
 import com.tiers.screens.ConfigScreen;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.util.GsonHelper;
 import org.jspecify.annotations.NonNull;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
@@ -56,7 +59,9 @@ public class ColorLoader implements PreparableReloadListener {
             TiersClient.restyleAllTexts(configProfiles);
         }
 
-        return CompletableFuture.runAsync(() -> {}, taskExecutor).thenCompose(preparationBarrier::wait).thenRunAsync(() -> {}, reloadExecutor);
+        return CompletableFuture.runAsync(() -> {
+        }, taskExecutor).thenCompose(preparationBarrier::wait).thenRunAsync(() -> {
+        }, reloadExecutor);
     }
 
     private static String loadStringFromResources(String path) {

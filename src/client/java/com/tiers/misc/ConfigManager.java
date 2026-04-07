@@ -9,9 +9,13 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.network.chat.Component;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 
 public class ConfigManager {
     private static Config config;
@@ -117,26 +121,7 @@ public class ConfigManager {
 
     private static void restoreFromClient() {
         config = new Config();
-
-        config.toggleMod = TiersClient.toggleMod;
-        config.toggleIcons = TiersClient.toggleIcons;
-        config.toggleTab = TiersClient.toggleTab;
-        config.toggleChat = TiersClient.toggleChat;
-        config.toggleAdaptiveSeparator = TiersClient.toggleAdaptiveSeparator;
-        config.toggleAutoKitDetect = TiersClient.toggleAutoKitDetect;
-        config.displayMode = TiersClient.displayMode;
-        config.activeIcons = TiersClient.activeIcons;
-
-        config.positionMCTiers = TiersClient.positionMCTiers;
-        config.activeMCTiersMode = TiersClient.activeMCTiersMode;
-
-        config.positionPvPTiers = TiersClient.positionPvPTiers;
-        config.activePvPTiersMode = TiersClient.activePvPTiersMode;
-
-        config.positionSubtiers = TiersClient.positionSubtiers;
-        config.activeSubtiersMode = TiersClient.activeSubtiersMode;
-
-        config.version = version;
+        updateConfig(config);
 
         TiersClient.LOGGER.info("Broken config file: Tiers has restored values from the client memory");
 
@@ -148,6 +133,20 @@ public class ConfigManager {
         File file = CONFIG_PATH.toFile();
         Config config = new Config();
 
+        updateConfig(config);
+
+        CompletableFuture.runAsync(() -> {
+            try (FileWriter fileWriter = new FileWriter(file)) {
+                gson.toJson(config, fileWriter);
+            } catch (IOException ignored) {
+                restoreFromClient();
+            } finally {
+                TiersClient.updateAllTags();
+            }
+        });
+    }
+
+    private static void updateConfig(Config config) {
         config.toggleMod = TiersClient.toggleMod;
         config.toggleIcons = TiersClient.toggleIcons;
         config.toggleTab = TiersClient.toggleTab;
@@ -167,14 +166,6 @@ public class ConfigManager {
         config.activeSubtiersMode = TiersClient.activeSubtiersMode;
 
         config.version = version;
-
-        try (FileWriter fileWriter = new FileWriter(file)) {
-            gson.toJson(config, fileWriter);
-        } catch (IOException ignored) {
-            restoreFromClient();
-        } finally {
-            TiersClient.updateAllTags();
-        }
     }
 
     public static String getCurrentConfig() {

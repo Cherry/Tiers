@@ -4,7 +4,6 @@ import com.tiers.misc.Mode;
 import com.tiers.profile.GameMode;
 import net.minecraft.resources.Identifier;
 
-
 public class SubtiersProfile extends SuperProfile {
     public static final Identifier SUBTIERS_IMAGE = Identifier.fromNamespaceAndPath("minecraft", "textures/subtiers_logo.png");
 
