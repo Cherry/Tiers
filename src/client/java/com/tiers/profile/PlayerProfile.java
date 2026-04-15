@@ -43,8 +43,8 @@ import static com.tiers.TiersClient.*;
 
 public class PlayerProfile {
     public static final CopyOnWriteArrayList<PlayerProfile> failedPlayerProfiles = new CopyOnWriteArrayList<>();
-    public static AtomicInteger playerProfilesRequests = new AtomicInteger(0);
-    public static AtomicInteger failedPlayerProfilesRequests = new AtomicInteger(0);
+    public static final AtomicInteger playerProfilesRequests = new AtomicInteger(0);
+    public static final AtomicInteger failedPlayerProfilesRequests = new AtomicInteger(0);
     public Status status;
     public int imageSaved;
     public int numberOfImageRequests;
@@ -558,14 +558,7 @@ public class PlayerProfile {
             dest.append(Component.literal(chunkBuilder.toString()).setStyle(currentStyle));
     }
 
-    private static class StyledChar {
-        char character;
-        Style style;
-
-        StyledChar(char character, Style style) {
-            this.character = character;
-            this.style = style;
-        }
+    private record StyledChar(char character, Style style) {
     }
 
     @Override
