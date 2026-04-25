@@ -25,6 +25,8 @@ public class Icons {
     public static final Component TAB_DISABLED = Component.literal("\uF007").setStyle(Style.EMPTY.withFont(fontDescription));
     public static final Component CHAT = Component.literal("\uF008").setStyle(Style.EMPTY.withFont(fontDescription));
     public static final Component CHAT_DISABLED = Component.literal("\uF009").setStyle(Style.EMPTY.withFont(fontDescription));
+    public static final Component NAMEMC = Component.literal("\uF00A").setStyle(Style.EMPTY.withFont(fontDescription));
+    public static final Component DISCORD = Component.literal("\uF00B").setStyle(Style.EMPTY.withFont(fontDescription));
 
     public enum Type {
         CLASSIC,

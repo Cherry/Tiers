@@ -38,14 +38,14 @@ public class ConfigManager {
         TiersClient.ModesTierDisplay displayMode;
         Icons.Type activeIcons;
 
-        TiersClient.DisplayStatus positionMCTiers;
-        Mode activeMCTiersMode;
+//        TiersClient.DisplayStatus positionMCTiers;
+//        Mode activeMCTiersMode;
 
         TiersClient.DisplayStatus positionPvPTiers;
         Mode activePvPTiersMode;
 
-        TiersClient.DisplayStatus positionSubtiers;
-        Mode activeSubtiersMode;
+//        TiersClient.DisplayStatus positionSubtiers;
+//        Mode activeSubtiersMode;
 
         String version;
     }
@@ -77,20 +77,20 @@ public class ConfigManager {
         if (Arrays.stream(Icons.Type.values()).toList().contains(config.activeIcons))
             TiersClient.activeIcons = config.activeIcons;
 
-        if (Arrays.stream(TiersClient.DisplayStatus.values()).toList().contains(config.positionMCTiers))
-            TiersClient.positionMCTiers = config.positionMCTiers;
-        if (Arrays.stream(Mode.values()).toList().contains(config.activeMCTiersMode) && config.activeMCTiersMode.toString().contains("MCTIERS"))
-            TiersClient.activeMCTiersMode = config.activeMCTiersMode;
+//        if (Arrays.stream(TiersClient.DisplayStatus.values()).toList().contains(config.positionMCTiers))
+//            TiersClient.positionMCTiers = config.positionMCTiers;
+//        if (Arrays.stream(Mode.values()).toList().contains(config.activeMCTiersMode) && config.activeMCTiersMode.toString().contains("MCTIERS"))
+//            TiersClient.activeMCTiersMode = config.activeMCTiersMode;
 
         if (Arrays.stream(TiersClient.DisplayStatus.values()).toList().contains(config.positionPvPTiers))
             TiersClient.positionPvPTiers = config.positionPvPTiers;
         if (Arrays.stream(Mode.values()).toList().contains(config.activePvPTiersMode) && config.activePvPTiersMode.toString().contains("PVPTIERS"))
             TiersClient.activePvPTiersMode = config.activePvPTiersMode;
 
-        if (Arrays.stream(TiersClient.DisplayStatus.values()).toList().contains(config.positionSubtiers))
-            TiersClient.positionSubtiers = config.positionSubtiers;
-        if (Arrays.stream(Mode.values()).toList().contains(config.activeSubtiersMode) && config.activeSubtiersMode.toString().contains("SUBTIERS"))
-            TiersClient.activeSubtiersMode = config.activeSubtiersMode;
+//        if (Arrays.stream(TiersClient.DisplayStatus.values()).toList().contains(config.positionSubtiers))
+//            TiersClient.positionSubtiers = config.positionSubtiers;
+//        if (Arrays.stream(Mode.values()).toList().contains(config.activeSubtiersMode) && config.activeSubtiersMode.toString().contains("SUBTIERS"))
+//            TiersClient.activeSubtiersMode = config.activeSubtiersMode;
 
         if (config.version == null) {
             ClientTickEvents.END_CLIENT_TICK.register(minecraft -> {
@@ -156,14 +156,14 @@ public class ConfigManager {
         config.displayMode = TiersClient.displayMode;
         config.activeIcons = TiersClient.activeIcons;
 
-        config.positionMCTiers = TiersClient.positionMCTiers;
-        config.activeMCTiersMode = TiersClient.activeMCTiersMode;
+//        config.positionMCTiers = TiersClient.positionMCTiers;
+//        config.activeMCTiersMode = TiersClient.activeMCTiersMode;
 
         config.positionPvPTiers = TiersClient.positionPvPTiers;
         config.activePvPTiersMode = TiersClient.activePvPTiersMode;
 
-        config.positionSubtiers = TiersClient.positionSubtiers;
-        config.activeSubtiersMode = TiersClient.activeSubtiersMode;
+//        config.positionSubtiers = TiersClient.positionSubtiers;
+//        config.activeSubtiersMode = TiersClient.activeSubtiersMode;
 
         config.version = version;
     }
@@ -178,12 +178,12 @@ public class ConfigManager {
                 "\ntoggleAutoKitDetect=" + config.toggleAutoKitDetect +
                 "\ndisplayMode=" + config.displayMode +
                 "\nactiveIcons=" + config.activeIcons +
-                "\npositionMCTiers=" + config.positionMCTiers +
-                "\nactiveMCTiersMode=" + config.activeMCTiersMode +
+//                "\npositionMCTiers=" + config.positionMCTiers +
+//                "\nactiveMCTiersMode=" + config.activeMCTiersMode +
                 "\npositionPvPTiers=" + config.positionPvPTiers +
                 "\nactivePvPTiersMode=" + config.activePvPTiersMode +
-                "\npositionSubtiers=" + config.positionSubtiers +
-                "\nactiveSubtiersMode=" + config.activeSubtiersMode +
+//                "\npositionSubtiers=" + config.positionSubtiers +
+//                "\nactiveSubtiersMode=" + config.activeSubtiersMode +
                 "\nversion=" + config.version +
                 "\n}";
     }

@@ -5,9 +5,7 @@ import com.tiers.TiersClient;
 import com.tiers.profile.GameMode;
 import com.tiers.profile.PlayerProfile;
 import com.tiers.profile.Status;
-import com.tiers.profile.types.MCTiersProfile;
 import com.tiers.profile.types.PvPTiersProfile;
-import com.tiers.profile.types.SubtiersProfile;
 import com.tiers.profile.types.SuperProfile;
 import com.tiers.textures.ColorControl;
 import com.tiers.textures.Icons;
@@ -67,8 +65,8 @@ public class PlayerSearchResultScreen extends Screen {
         separator = height / 23;
         small = width < 575 || height < 420;
         tooSmall = width < 430 || height < 262;
-        int firstListX = (int) (centerX - width / 3.5) - 25;
-        int thirdListX = (int) (centerX + width / 3.5) + 25;
+//        int firstListX = (int) (centerX - width / 3.5) - 25;
+//        int thirdListX = (int) (centerX + width / 3.5) + 25;
         int avatarY = height / 55 + 12;
 
         super.extractRenderState(graphics, mouseX, mouseY, a);
@@ -93,9 +91,9 @@ public class PlayerSearchResultScreen extends Screen {
 
         graphics.centeredText(font, playerProfile.getFullName(), centerX, height / 55, CommonColors.WHITE);
 
-        drawCategoryList(graphics, MCTiersProfile.MCTIERS_IMAGE, playerProfile.profileMCTiers, firstListX, listY);
+//        drawCategoryList(graphics, MCTiersProfile.MCTIERS_IMAGE, playerProfile.profileMCTiers, firstListX, listY);
         drawCategoryList(graphics, PvPTiersProfile.PVPTIERS_IMAGE, playerProfile.profilePvPTiers, centerX, listY);
-        drawCategoryList(graphics, SubtiersProfile.SUBTIERS_IMAGE, playerProfile.profileSubtiers, thirdListX, listY);
+//        drawCategoryList(graphics, SubtiersProfile.SUBTIERS_IMAGE, playerProfile.profileSubtiers, thirdListX, listY);
     }
 
     private void drawCategoryList(GuiGraphicsExtractor graphics, Identifier image, SuperProfile superProfile, int x, int y) {
@@ -104,12 +102,14 @@ public class PlayerSearchResultScreen extends Screen {
             return;
         }
 
-        if (image == MCTiersProfile.MCTIERS_IMAGE)
-            graphics.blit(RenderPipelines.GUI_TEXTURED, image, x - 64, (int) (y + 2.4 * separator) + 4 - 38, 0, 0, 128, 24, 128, 24);
-        else if (image == PvPTiersProfile.PVPTIERS_IMAGE)
-            graphics.blit(RenderPipelines.GUI_TEXTURED, image, x - 12, (int) (y + 2.4 * separator) + 4 - 38, 0, 0, 24, 24, 24, 24);
-        else
-            graphics.blit(RenderPipelines.GUI_TEXTURED, image, (int) (x - 15.5), (int) (y + 2.4 * separator) - 38, 0, 0, 31, 31, 31, 31);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, image, x - 12, (int) (y + 2.4 * separator) + 4 - 38, 0, 0, 24, 24, 24, 24);
+
+//        if (image == MCTiersProfile.MCTIERS_IMAGE)
+//            graphics.blit(RenderPipelines.GUI_TEXTURED, image, x - 64, (int) (y + 2.4 * separator) + 4 - 38, 0, 0, 128, 24, 128, 24);
+//        else if (image == PvPTiersProfile.PVPTIERS_IMAGE)
+//            graphics.blit(RenderPipelines.GUI_TEXTURED, image, x - 12, (int) (y + 2.4 * separator) + 4 - 38, 0, 0, 24, 24, 24, 24);
+//        else
+//            graphics.blit(RenderPipelines.GUI_TEXTURED, image, (int) (x - 15.5), (int) (y + 2.4 * separator) - 38, 0, 0, 31, 31, 31, 31);
 
         if (superProfile.status == Status.SEARCHING) {
             graphics.centeredText(font, "Searching...", x, (int) (y + 2.8 * separator), ColorControl.getColorMinecraftStandard("green"));
@@ -170,6 +170,17 @@ public class PlayerSearchResultScreen extends Screen {
             addRenderableWidget(overall);
 
             drawTierList(superProfile, x - 64, (int) (y + 2.4 * separator) + 40);
+
+//            if (superProfile instanceof MCTiersProfile && playerProfile.profileMCTiers.discordId != null) {
+//                addRenderableWidget(Button.builder(Icons.DISCORD, (_) -> {
+//                    Minecraft client = Minecraft.getInstance();
+//                    client.setScreen(new ConfirmLinkScreen((confirmed) -> {
+//                        if (confirmed)
+//                            Util.getPlatform().openUri("https://discord.com/users/" + playerProfile.profileMCTiers.discordId);
+//                        client.setScreen(this);
+//                    }, "https://discord.com/users/" + playerProfile.profileMCTiers.discordId, true));
+//                }).bounds(width - 20 - 5 - 24, height - 20 - 5, 20, 20).tooltip(Tooltip.create(Component.literal("Open " + playerProfile.targetName + "'s Discord profile"))).build());
+//            }
 
             superProfile.drawn = true;
         }
@@ -266,7 +277,7 @@ public class PlayerSearchResultScreen extends Screen {
     }
 
     @Override
-    protected void init() {
+    public void init() {
         playerProfile.resetDrawnStatus();
 
         dimensionsWarning = Button.builder(Component.literal("ℹ"), (_) -> {
@@ -280,9 +291,20 @@ public class PlayerSearchResultScreen extends Screen {
 
         addRenderableWidget(dimensionsWarning);
 
+        addRenderableWidget(Button.builder(Icons.NAMEMC, (_) -> {
+            Minecraft client = Minecraft.getInstance();
+            client.setScreen(new ConfirmLinkScreen((confirmed) -> {
+                if (confirmed)
+                    Util.getPlatform().openUri("https://namemc.com/profile/" + playerProfile.uuid);
+                client.setScreen(this);
+            }, "https://namemc.com/profile/" + playerProfile.uuid, true));
+        }).bounds(width - 20 - 5, height - 20 - 5, 20, 20).tooltip(Tooltip.create(Component.literal("Open " + playerProfile.targetName + "'s NameMC page"))).build());
+
         addRenderableWidget(Button.builder(Component.literal("Update"), (_) -> TiersClient.showUpdatedPlayerProfile(playerProfile, true)).bounds(5, height - 20 - 5, 68, 20).tooltip(Tooltip.create(Component.literal("Reload the player profile"))).build());
-        addRenderableWidget(Button.builder(Icons.CYCLE, (_) -> playerProfile.updateTierlistProfiles(1)).bounds(5, height - 20 - 5 - 22, 20, 20).tooltip(Tooltip.create(Component.literal("Update MCTiers results"))).build());
-        addRenderableWidget(Button.builder(Icons.CYCLE, (_) -> playerProfile.updateTierlistProfiles(2)).bounds(5 + 24, height - 20 - 5 - 22, 20, 20).tooltip(Tooltip.create(Component.literal("Update PvPTiers results"))).build());
-        addRenderableWidget(Button.builder(Icons.CYCLE, (_) -> playerProfile.updateTierlistProfiles(3)).bounds(5 + 24 + 24, height - 20 - 5 - 22, 20, 20).tooltip(Tooltip.create(Component.literal("Update Subtiers results"))).build());
+        //addRenderableWidget(Button.builder(Icons.CYCLE, (_) -> playerProfile.updateTierlistProfiles(1)).bounds(5, height - 20 - 5 - 22, 20, 20).tooltip(Tooltip.create(Component.literal("Update MCTiers results"))).build());
+        //addRenderableWidget(Button.builder(Icons.CYCLE, (_) -> playerProfile.updateTierlistProfiles(2)).bounds(5 + 24, height - 20 - 5 - 22, 20, 20).tooltip(Tooltip.create(Component.literal("Update PvPTiers results"))).build());
+        //addRenderableWidget(Button.builder(Icons.CYCLE, (_) -> playerProfile.updateTierlistProfiles(3)).bounds(5 + 24 + 24, height - 20 - 5 - 22, 20, 20).tooltip(Tooltip.create(Component.literal("Update Subtiers results"))).build());
+        addRenderableWidget(Button.builder(Icons.CYCLE, (_) -> playerProfile.updateTierlistProfiles(2)).bounds(5, height - 20 - 5 - 22, 20, 20).tooltip(Tooltip.create(Component.literal("Update PvPTiers results"))).build());
+
     }
 }

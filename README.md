@@ -1,6 +1,6 @@
 ## Tiers,
 
-Official Display mod for [PvPTiers](https://pvptiers.com). Also Supports other Tierlists: [MCTiers](https://mctiers.com) and [Subtiers](https://subtiers.net)
+Official tier display mod for [PvPTiers](https://pvptiers.com)
 
 ### Mod showcase:
 
@@ -15,7 +15,7 @@ Official Display mod for [PvPTiers](https://pvptiers.com). Also Supports other T
 
 ### Mod features:
 
-- **`Auto detect kit:`** press **Y** (editable) to auto-detect the gamemode you are playing to easily switch and see opponents tiers in that gamemode
+- **`Auto detect kit:`** press **Y** (editable) to auto-detect the gamemode you are playing to easily switch and see opponent tiers in that gamemode
 - **`See nearest player stats:`** press **H** (editable) to open the closest player search result screen
 - **`Search screen:`** see all tiers, peaks, regions, points, global rankings and skin with **/tiers name**
 - **`Change gamemodes and their position:`** choose a gamemode for each ranking site and decide whether to display it on the left or right
@@ -23,7 +23,7 @@ Official Display mod for [PvPTiers](https://pvptiers.com). Also Supports other T
 - **`Change preset styles:`** you can change icons and colors presets in the config screen
 - **`Display gamemodes:`** whether to display selected mode, adaptive highest or absolute highest
 
-### Screen config (ModMenu or /tiers config):
+### Screen config (ModMenu or /tiers -config):
 
 - **`Toggle Tiers`** toggles Tiers
 - **`Toggle Icons`** toggles the icons next to the tiers
@@ -39,15 +39,10 @@ Official Display mod for [PvPTiers](https://pvptiers.com). Also Supports other T
 >![ConfigScreen](https://raw.githubusercontent.com/Flavio6561/Gallery/refs/heads/main/Tiers/ConfigScreen.png)  
 > `The config screen on 3 GUI scale`
 
-### Why Tiers?
-
-**All sites in one mod:**
-> Tiers is able to track and display all rankings from the official tierlist [PvPTiers](https://pvptiers.com) and variant lists [MCTiers](https://mctiers.com), [Subtiers](https://subtiers.net)
-
-**Customizable icons:**
-> With Tiers, you can customize gamemodes icons and text colors, as well as choosing where and what gamemode to display; want to manually modify the icons or tiers colors? Edit and add in your pack folder the [default texture pack](https://github.com/Flavio6561/Tiers/tree/master/src/main/resources/resourcepacks)
 
 ### Other:
+
+> You can customize gamemodes icons and text colors, as well as choosing where and what gamemode to display; want to manually modify the icons or tiers colors? Edit and add in your pack folder the [default texture pack](https://github.com/PvPTiers/Tiers/tree/master/src/main/resources/resourcepacks)
 
 > Settings will be saved in your config folder and updated at runtime
 
