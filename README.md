@@ -4,8 +4,8 @@ Official tier display mod for [PvPTiers](https://pvptiers.com)
 
 ### Mod showcase:
 
->![NameTags](https://raw.githubusercontent.com/Flavio6561/Gallery/refs/heads/main/Tiers/NameTags.gif)  
-> `Switchable MCTiers, PvPTiers and Subtiers icons and colors`  
+>![NameTags](https://raw.githubusercontent.com/Flavio6561/Gallery/refs/heads/main/Tiers/NameTags.png)  
+> `Switchable PvPTiers, classic and legacy icons and colors`  
 > `Auto detect kit: press 'Y' to autodetect the current gamemode`
 
 >![SearchResultScreen](https://raw.githubusercontent.com/Flavio6561/Gallery/refs/heads/main/Tiers/SearchResultScreen.gif)  
