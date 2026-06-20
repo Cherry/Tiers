@@ -97,11 +97,11 @@ public class ConfigManager {
                 if (upgradeAdjustmentDone)
                     return;
 
-                if (minecraft.screen instanceof net.minecraft.client.gui.screens.TitleScreen) {
+                if (minecraft.gui.screen() instanceof net.minecraft.client.gui.screens.TitleScreen) {
                     launchTickCounter++;
 
                     if (launchTickCounter >= 20) {
-                        SystemToast.add(minecraft.getToastManager(), SystemToast.SystemToastId.NARRATOR_TOGGLE, Component.literal("Thanks for updating Tiers"), Component.literal("Some settings may have changed"));
+                        SystemToast.add(minecraft.gui.toastManager(), SystemToast.SystemToastId.NARRATOR_TOGGLE, Component.literal("Thanks for updating Tiers"), Component.literal("Some settings may have changed"));
                         TiersClient.toggleMod = true;
                         TiersClient.toggleIcons = true;
                         TiersClient.toggleTab = true;

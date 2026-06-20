@@ -56,7 +56,7 @@ public class PlayerSearchResultScreen extends Screen {
         }
 
         if (playerProfile.nameChanged && !toastShown) {
-            SystemToast.add(Minecraft.getInstance().getToastManager(), SystemToast.SystemToastId.NARRATOR_TOGGLE, Component.literal("Recent name change"), Component.literal("(" + playerProfile.name + " to " + playerProfile.inGameName + ") Data should be accurate"));
+            SystemToast.add(Minecraft.getInstance().gui.toastManager(), SystemToast.SystemToastId.NARRATOR_TOGGLE, Component.literal("Recent name change"), Component.literal("(" + playerProfile.name + " to " + playerProfile.inGameName + ") Data should be accurate"));
             toastShown = true;
         }
 
@@ -129,10 +129,10 @@ public class PlayerSearchResultScreen extends Screen {
             if (!superProfile.apiErrorShown) {
                 addRenderableWidget(Button.builder(Component.literal("Report issue"), (_) -> {
                     Minecraft client = Minecraft.getInstance();
-                    client.setScreen(new ConfirmLinkScreen((confirmed) -> {
+                    client.setScreenAndShow(new ConfirmLinkScreen((confirmed) -> {
                         if (confirmed)
                             Util.getPlatform().openUri("https://github.com/PvPTiers/Tiers/issues");
-                        client.setScreen(this);
+                        client.setScreenAndShow(this);
                     }, "https://github.com/PvPTiers/Tiers/issues", true));
                 }).bounds(x - 40, (int) (y + 2.8 * separator + 50 + 12), 80, 20).tooltip(Tooltip.create(Component.literal("Report this issue on GitHub. Make sure to report only if the same search on either mctiers.com, pvptiers.com or subtiers.com doesn't fail"))).build());
                 superProfile.apiErrorShown = true;
@@ -293,10 +293,10 @@ public class PlayerSearchResultScreen extends Screen {
 
         addRenderableWidget(Button.builder(Icons.NAMEMC, (_) -> {
             Minecraft client = Minecraft.getInstance();
-            client.setScreen(new ConfirmLinkScreen((confirmed) -> {
+            client.setScreenAndShow(new ConfirmLinkScreen((confirmed) -> {
                 if (confirmed)
                     Util.getPlatform().openUri("https://namemc.com/profile/" + playerProfile.uuid);
-                client.setScreen(this);
+                client.setScreenAndShow(this);
             }, "https://namemc.com/profile/" + playerProfile.uuid, true));
         }).bounds(width - 20 - 5, height - 20 - 5, 20, 20).tooltip(Tooltip.create(Component.literal("Open " + playerProfile.targetName + "'s NameMC page"))).build());
 

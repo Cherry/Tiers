@@ -53,7 +53,7 @@ public class ConfigScreen extends Screen {
 //    private Button centerMCTiers;
 //    private Button rightMCTiers;
     private Button leftPvPTiers;
-    private Button centerPvPTiers;
+//    private Button centerPvPTiers;
     private Button rightPvPTiers;
 //    private Button leftSubtiers;
 //    private Button centerSubtiers;
@@ -131,9 +131,9 @@ public class ConfigScreen extends Screen {
 //        leftMCTiers.setPosition(centerX - 120 - 10 - 24, distance + 145);
 //        centerMCTiers.setPosition(centerX - 120 - 10, distance + 145);
 //        rightMCTiers.setPosition(centerX - 120 - 10 + 24, distance + 145);
-        leftPvPTiers.setPosition(centerX - 10 - 24, distance + 145);
-        centerPvPTiers.setPosition(centerX - 10, distance + 145);
-        rightPvPTiers.setPosition(centerX - 10 + 24, distance + 145);
+        leftPvPTiers.setPosition(centerX - 10 - 12, distance + 145);
+//        centerPvPTiers.setPosition(centerX - 10, distance + 145);
+        rightPvPTiers.setPosition(centerX - 10 + 12, distance + 145);
 //        leftSubtiers.setPosition(centerX + 120 - 10 - 24, distance + 145);
 //        centerSubtiers.setPosition(centerX + 120 - 10, distance + 145);
 //        rightSubtiers.setPosition(centerX + 120 - 10 + 24, distance + 145);
@@ -259,16 +259,17 @@ public class ConfigScreen extends Screen {
 //                leftMCTiers.active = true;
 //                centerMCTiers.active = false;
 //            }
-            updateLeftSwitcher(buttonWidget, centerPvPTiers, rightPvPTiers);
-        }).bounds(centerX - 10 - 24, distance + 145, 20, 20).tooltip(Tooltip.create(Component.literal("Display PvPTiers on the left"))).build();
+//            updateLeftSwitcher(buttonWidget, centerPvPTiers, rightPvPTiers);
+            updateLeftSwitcher(buttonWidget, rightPvPTiers);
+        }).bounds(centerX - 10 - 12, distance + 145, 20, 20).tooltip(Tooltip.create(Component.literal("Display PvPTiers on the left"))).build();
 
-        centerPvPTiers = Button.builder(Component.literal("●"), (buttonWidget) -> {
-            TiersClient.positionPvPTiers = TiersClient.DisplayStatus.OFF;
-            leftPvPTiers.active = true;
-            buttonWidget.active = false;
-            rightPvPTiers.active = true;
-            ConfigManager.saveConfig();
-        }).bounds(centerX - 10, distance + 145, 20, 20).tooltip(Tooltip.create(Component.literal("Disable PvPTiers"))).build();
+//        centerPvPTiers = Button.builder(Component.literal("●"), (buttonWidget) -> {
+//            TiersClient.positionPvPTiers = TiersClient.DisplayStatus.OFF;
+//            leftPvPTiers.active = true;
+//            buttonWidget.active = false;
+//            rightPvPTiers.active = true;
+//            ConfigManager.saveConfig();
+//        }).bounds(centerX - 10, distance + 145, 20, 20).tooltip(Tooltip.create(Component.literal("Disable PvPTiers"))).build();
 
         rightPvPTiers = Button.builder(Component.literal("→"), (buttonWidget) -> {
             TiersClient.positionPvPTiers = TiersClient.DisplayStatus.RIGHT;
@@ -277,8 +278,9 @@ public class ConfigScreen extends Screen {
 //                centerMCTiers.active = false;
 //                rightMCTiers.active = true;
 //            }
-            updateRightSwitcher(buttonWidget, leftPvPTiers, centerPvPTiers);
-        }).bounds(centerX - 10 + 24, distance + 145, 20, 20).tooltip(Tooltip.create(Component.literal("Display PvPTiers on the right"))).build();
+//            updateRightSwitcher(buttonWidget, leftPvPTiers, centerPvPTiers);
+            updateRightSwitcher(buttonWidget, leftPvPTiers);
+        }).bounds(centerX - 10 + 12, distance + 145, 20, 20).tooltip(Tooltip.create(Component.literal("Display PvPTiers on the right"))).build();
 
 //        leftSubtiers = Button.builder(Component.literal("←"), (buttonWidget) -> {
 //            TiersClient.positionSubtiers = TiersClient.DisplayStatus.LEFT;
@@ -332,7 +334,7 @@ public class ConfigScreen extends Screen {
 
         switch (TiersClient.positionPvPTiers) {
             case RIGHT -> rightPvPTiers.active = false;
-            case OFF -> centerPvPTiers.active = false;
+//            case OFF -> centerPvPTiers.active = false;
             case LEFT -> leftPvPTiers.active = false;
         }
 
@@ -383,30 +385,44 @@ public class ConfigScreen extends Screen {
 
 //        Stream.of(toggleMod, toggleIcons, toggleTab, toggleChat, toggleSeparatorMode, cycleDisplayMode, autoKitDetect, clearPlayerCache, leftMCTiers, centerMCTiers, rightMCTiers, leftPvPTiers, centerPvPTiers, rightPvPTiers, leftSubtiers, centerSubtiers, rightSubtiers, activeRightMode, activeLeftMode, enableOwnProfile, useClassicIcons, usePvPTiersIcons, useMCTiersIcons)
 //                .forEach(this::addRenderableWidget);
-        Stream.of(toggleMod, toggleIcons, toggleTab, toggleChat, toggleSeparatorMode, cycleDisplayMode, autoKitDetect, clearPlayerCache, leftPvPTiers, centerPvPTiers, rightPvPTiers, activeRightMode, activeLeftMode, enableOwnProfile, useClassicIcons, usePvPTiersIcons, useMCTiersIcons)
+//        Stream.of(toggleMod, toggleIcons, toggleTab, toggleChat, toggleSeparatorMode, cycleDisplayMode, autoKitDetect, clearPlayerCache, leftPvPTiers, centerPvPTiers, rightPvPTiers, activeRightMode, activeLeftMode, enableOwnProfile, useClassicIcons, usePvPTiersIcons, useMCTiersIcons)
+//                .forEach(this::addRenderableWidget);
+        Stream.of(toggleMod, toggleIcons, toggleTab, toggleChat, toggleSeparatorMode, cycleDisplayMode, autoKitDetect, clearPlayerCache, leftPvPTiers, rightPvPTiers, activeRightMode, activeLeftMode, enableOwnProfile, useClassicIcons, usePvPTiersIcons, useMCTiersIcons)
                 .forEach(this::addRenderableWidget);
     }
 
-    private void updateRightSwitcher(Button Button, Button leftMCTiers, Button centerMCTiers) {
+//    private void updateRightSwitcher(Button Button, Button leftMCTiers, Button centerMCTiers) {
 //        if (TiersClient.positionSubtiers == TiersClient.DisplayStatus.RIGHT) {
 //            TiersClient.positionSubtiers = TiersClient.DisplayStatus.OFF;
 //            centerSubtiers.active = false;
 //            rightSubtiers.active = true;
 //        }
-        leftMCTiers.active = true;
-        centerMCTiers.active = true;
-        Button.active = false;
-        ConfigManager.saveConfig();
-    }
-
-    private void updateLeftSwitcher(Button Button, Button centerMCTiers, Button rightMCTiers) {
+//        leftMCTiers.active = true;
+//        centerMCTiers.active = true;
+//        Button.active = false;
+//        ConfigManager.saveConfig();
+//    }
+//
+//    private void updateLeftSwitcher(Button Button, Button centerMCTiers, Button rightMCTiers) {
 //        if (TiersClient.positionSubtiers == TiersClient.DisplayStatus.LEFT) {
 //            TiersClient.positionSubtiers = TiersClient.DisplayStatus.OFF;
 //            leftSubtiers.active = true;
 //            centerSubtiers.active = false;
 //        }
+//        Button.active = false;
+//        centerMCTiers.active = true;
+//        rightMCTiers.active = true;
+//        ConfigManager.saveConfig();
+//    }
+
+    private void updateRightSwitcher(Button Button, Button leftMCTiers) {
+        leftMCTiers.active = true;
         Button.active = false;
-        centerMCTiers.active = true;
+        ConfigManager.saveConfig();
+    }
+
+    private void updateLeftSwitcher(Button Button, Button rightMCTiers) {
+        Button.active = false;
         rightMCTiers.active = true;
         ConfigManager.saveConfig();
     }

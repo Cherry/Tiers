@@ -740,8 +740,7 @@ public class InventoryChecker {
             hasXp |= hasItem(stack, Items.EXPERIENCE_BOTTLE);
             hasPearls |= hasItem(stack, Items.ENDER_PEARL);
             hasGaps |= hasItem(stack, Items.GOLDEN_APPLE);
-            hasBed |= (hasItem(stack, Items.BLACK_BED) || hasItem(stack, Items.BLUE_BED) || hasItem(stack, Items.ORANGE_BED) || hasItem(stack, Items.BROWN_BED) ||
-                    hasItem(stack, Items.RED_BED) || hasItem(stack, Items.WHITE_BED) || hasItem(stack, Items.GREEN_BED) || hasItem(stack, Items.YELLOW_BED));
+            hasBed |= Items.BED.asList().stream().anyMatch(item -> hasItem(stack, item));
             hasObsidian |= hasItem(stack, Items.OBSIDIAN);
             hasSword |= hasItem(stack, Items.NETHERITE_SWORD, true);
             hasPickaxe |= hasItem(stack, Items.NETHERITE_PICKAXE, true);
